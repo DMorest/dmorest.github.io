@@ -2,8 +2,8 @@ menu:
   首页: /
   归档: /archives
   标签: /tags
-  分类: /categories
   关于: /about
+  分类: /categories
 judgeline:
   enable: true
   color: '#38bdf8'
@@ -20,20 +20,74 @@ footer:
   powered_by: true
 fonts:
   enable: true
+phigros:
+  system_name: PhigrOS
+  dome_label: D.O.M.E
+  accent: '#39b9e8'
 background:
   image: /images/bg.jpg
   blur: 12px
   brightness: 0.35
   grid: true
   grid_color: 56, 189, 248
+saturn:
+  analysis_default: 100
+  supervisor_default: D.O.M.E
+  category_default: main
+  core_categories: []
+  category_fallback_cover: /images/category-default.jpg
+  category_folders:
+    日志:
+      title: 日志
+      subtitle: 最直接的记录。
+      cover: ''
+      completion: 100
+    教程:
+      title: 教程
+      subtitle: 哈默尔恩的回响。
+      cover: ''
+      completion: 100
+    创作:
+      title: 创作
+      subtitle: 你听见天使之乐了吗？
+      cover: ''
+      completion: 100
+    main:
+      title: MAIN
+      subtitle: MAIN_STORY
+      cover: ''
+      completion: 100
+    tutorial:
+      title: TUTORIAL
+      subtitle: TUTORIAL
+      cover: ''
+      completion: 100
+    creative:
+      title: CREATIVE
+      subtitle: CREATIVE
+      cover: ''
+      completion: 100
 home:
+  timeline_count: 6
+  features: []
   misc:
-    contact: ''
-    contact_url: 'mailto:'
+    contact: dmorest@foxmail.com
+    contact_url: mailto:dmorest@foxmail.com
     social:
       bilibili: https://space.bilibili.com/442631701
       github: https://github.com/DMorest
       x: https://x.com/dmorest0609
       email: mailto:dmorest@foxmail.com
-    author_url: ''
+    copyright_title: PHATASiA LOTUS LAND
     friends: []
+    author_url: ''
+comments:
+  enable: true
+  waline:
+    serverURL: https://phatasia-dm.vercel.app
+    lang: zh-CN
+    dark: true
+    path: ''
+localization:
+  auto: true
+  default: zh-CN
