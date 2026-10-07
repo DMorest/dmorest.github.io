@@ -31,7 +31,7 @@
       "collection.tab": "//COLLECTION", "category.database": "CATEGORY_DATABASE", "category.label": "CATEGORY", "category.collection": "COLLECTION",
       "category.foldersAvailable": function(n){ return n + " FOLDERS AVAILABLE"; }, "collection.files": function(n){ return n + " FILES"; },
       "archive.database": "MEMORY_DATABASE", "tag.database": "TAG_DATABASE", "tag.label": "TAG", "tag.information": "TAG_INFORMATION",
-      "folder.content": "FOLDER_CONTENT", "folder.information": "FOLDER_INFORMATION", "folder.section": "CONTENT", "folder.completion": "COMPLETION", "folder.back": "BACK", "collection.noFiles": "NO FILES CONNECTED.",
+      "folder.content": "FOLDER_CONTENT", "folder.information": "FOLDER_INFORMATION", "folder.section": "CONTENT", "folder.completion": "Completion", "folder.back": "BACK", "collection.noFiles": "NO FILES CONNECTED.",
       "about.terminal": "PHIGROS_TERMINAL", "about.systemProfile": "SYSTEM_PROFILE", "about.operatorProfile": "PHATASiA LOTUS LAND // LIMBO PROFILE", "about.terminalLabel": "TERMINAL", "about.statusOnline": "STATUS // ONLINE", "about.supervisor": "SUPERVISOR", "about.channelOpen": "CHANNEL // OPEN", "about.contact": "CONTACT", "about.mailAvailable": "MAIL // AVAILABLE",
       "post.date": "DATE", "post.supervisor": "SUPERVISOR", "post.category": "CATEGORY",
     }
@@ -386,4 +386,17 @@
   window.addEventListener("blur", onBlur);
   window.addEventListener("focus", onFocus);
   setNormalTitle();
+})();
+
+
+// Saturn FILE_CONTENT BACK: return to the actual previous browser entry.
+(function () {
+  "use strict";
+  document.querySelectorAll("[data-phi-back]").forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      if (window.history && window.history.length > 1) window.history.back();
+      else window.location.href = "/";
+    });
+  });
 })();

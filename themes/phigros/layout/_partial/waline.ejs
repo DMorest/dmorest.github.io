@@ -1,8 +1,13 @@
-<% if (theme.comments && theme.comments.enable !== false && page.comments !== false) { %>
+<%
+  var commentFlag = String(page.comments == null ? '' : page.comments).trim().toLowerCase();
+  var commentsEnabled = !(commentFlag === 'false' || commentFlag === '0' || commentFlag === 'no');
+  var walineConfig = (theme.comments && theme.comments.waline) || {};
+%>
+<% if (commentsEnabled && (!theme.comments || theme.comments.enable !== false)) { %>
 <section class="phi-comments" aria-label="Comments">
   <div class="phi-comments__topbar">
     <span class="phi-comments__tab">FILE_COMMENT</span>
-    <span class="phi-comments__status">SECURE CHANNEL / <%= (theme.comments.waline && theme.comments.waline.lang) || 'zh-CN' %></span>
+    <span class="phi-comments__status">SECURE CHANNEL / <%= walineConfig.lang || 'zh-CN' %></span>
   </div>
   <div class="phi-comments__body">
     <div class="phi-comments__label">// RESONATOR CONNECTED</div>
@@ -15,8 +20,8 @@
   import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
   init({
     el: '#waline',
-    serverURL: '<%= (theme.comments.waline && theme.comments.waline.serverURL) || "" %>',
-    lang: '<%= (theme.comments.waline && theme.comments.waline.lang) || "zh-CN" %>',
+    serverURL: '<%= walineConfig.serverURL || "" %>',
+    lang: '<%= walineConfig.lang || "zh-CN" %>',
     dark: true,
     path: '<%= page.path %>',
     pageview: '.waline-pageview-count'

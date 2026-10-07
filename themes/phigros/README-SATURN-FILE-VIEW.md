@@ -24,8 +24,7 @@ folder_items: 14
 
 ### 字段说明
 
-- `analysis`: 顶部分析进度，0–100。100 时默认显示 `ANALYSIS COMPLETED.`，其他数值默认显示 `XX% ANALYZED.`。
-- `analysis_status`: 手动覆盖顶部状态文字，可写任意文本。
+- `analysis`: 顶部分析进度，0–100。100 时显示 `ANALYZATION COMPLETE.`，其他数值显示 `XX% ANALYZED.`。
 - `supervisor`: 文件信息中的 SUPERVISOR。
 - `category_label`: 文件信息中的 CATEGORY。
 - `folder_cover`: 左侧 FOLDER_INFORMATION 的封面。

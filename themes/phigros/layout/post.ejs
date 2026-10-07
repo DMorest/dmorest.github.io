@@ -24,10 +24,8 @@
   if (!isFinite(analysis)) analysis = 100;
   analysis = Math.max(0, Math.min(100, analysis));
 
-  var analysisStatus = page.analysis_status;
-  if (!analysisStatus) {
-    analysisStatus = analysis >= 100 ? 'ANALYSIS COMPLETED.' : (analysis + '% COLLECTED.');
-  }
+  /* Status is derived only from analysis; manual analysis_status is ignored. */
+  var analysisStatus = analysis >= 100 ? 'ANALYZATION COMPLETE.' : (analysis + '% ANALYZED.');
 
   var supervisor = page.supervisor || (config.author || 'D.O.M.E');
   /* Hexo 8 / Warehouse 6 exposes page.categories as a Query, not a native array. */
@@ -48,7 +46,6 @@
   var folderCategory = folderConfig.category || page.folder_category || primaryCategory || '';
   var selectedCategoryConfig = folderCategory && categoryFolders[folderCategory] ? categoryFolders[folderCategory] : categoryConfig;
   var folderTitle = folderConfig.title || page.folder_title || selectedCategoryConfig.title || folderCategory || page.title;
-  var folderSubtitle = folderConfig.subtitle || page.folder_subtitle || selectedCategoryConfig.subtitle || (folderCategory ? ('CATEGORY // ' + folderCategory) : '');
   var folderCompletion = Number(folderConfig.completion != null ? folderConfig.completion : (page.folder_completion != null ? page.folder_completion : selectedCategoryConfig.completion));
   if (!isFinite(folderCompletion)) folderCompletion = 100;
   folderCompletion = Math.max(0, Math.min(100, folderCompletion));
@@ -57,6 +54,7 @@
   var explicitFolderPosts = Array.isArray(folderConfig.posts) ? folderConfig.posts : (Array.isArray(page.folder_posts) ? page.folder_posts : null);
   var related = [];
   var relatedPool = [];
+  var hasUsableCategory = !!primaryCategory;
 
   /* Default folder contents = same-category posts. A custom folder can instead
      provide an explicit list of post slugs/paths in folder.posts. */
@@ -67,7 +65,7 @@
       if (match) relatedPool.push(p);
       return;
     }
-    if (folderCategory) {
+    if (folderCategory && hasUsableCategory) {
       var sameCategory = false;
       var postCategories = (p.categories && typeof p.categories.toArray === 'function') ? p.categories.toArray() : [];
       postCategories.forEach(function(cat) { if (cat.name === folderCategory) sameCategory = true; });
@@ -76,6 +74,7 @@
     relatedPool.push(p);
   });
 
+  if (!hasUsableCategory && !explicitFolderPosts) relatedPool = [];
   var folderItemsDefault = relatedPool.length + 1;
   var folderItems = Number(folderConfig.items != null ? folderConfig.items : (page.folder_items != null ? page.folder_items : selectedCategoryConfig.items));
   if (!isFinite(folderItems)) folderItems = folderItemsDefault;
@@ -94,9 +93,8 @@
       <% } %>
       <div class="phi-folder-cover__shade"></div>
       <div class="phi-folder-cover__info">
-        <% if (folderSubtitle) { %><span class="phi-folder-cover__sub"><%= folderSubtitle %></span><% } %>
         <strong><%= folderTitle %></strong>
-        <span><span data-i18n="folder.completion">Completion</span> <%= folderCompletion %>%</span>
+        <span>Completion <%= folderCompletion %>%</span>
       </div>
       <div class="phi-folder-cover__line" style="width:<%= folderCompletion %>%"></div>
     </div>
@@ -115,7 +113,7 @@
 
     <div class="phi-folder-footer">
       <span><%= Math.min(folderItems, related.length + 1) %>/<%= folderItems %></span>
-      <a href="<%- url_for('/') %>">&lt; <span data-i18n="folder.back">BACK</span></a>
+      <a href="#" data-phi-back>&lt; <span>BACK</span></a>
     </div>
   </aside>
 

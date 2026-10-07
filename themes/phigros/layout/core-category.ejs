@@ -1,34 +1,39 @@
 <%
-  var categoryName = page.category_name || page.title || '';
-  var cat = site.categories.findOne({ name: categoryName });
-  var posts = cat ? cat.toArray() : [];
+  var categoryName = String(page.category_name || page.title || '').trim();
+  var posts = [];
+  site.posts.toArray().forEach(function(post) {
+    var pcs = (post.categories && typeof post.categories.toArray === 'function') ? post.categories.toArray() : [];
+    var matched = false;
+    pcs.forEach(function(cat) { if (String(cat && cat.name || '').trim() === categoryName) matched = true; });
+    if (matched) posts.push(post);
+  });
   posts.sort(function(a, b) { return b.date - a.date; });
   var coreCategories = (theme.saturn && theme.saturn.core_categories) || [];
+  if (!coreCategories.length) coreCategories = [
+    {name:'日志',slug:'log',title:'日志'},
+    {name:'教程',slug:'tutorial',title:'教程'},
+    {name:'创作',slug:'creative',title:'创作'}
+  ];
   var cfg = {};
   coreCategories.some(function(item) {
-    if (item.name === categoryName) { cfg = item; return true; }
+    if (String(item.name || '').trim() === categoryName) { cfg = item; return true; }
     return false;
   });
 %>
-
 <div class="phi-collection-page phi-core-category-page">
   <div class="phi-collection-shell">
     <div class="phi-collection-topbar">
       <span class="phi-collection-tab">//COLLECTION</span>
       <span class="phi-collection-status" data-i18n="folder.content">FOLDER_CONTENT</span>
     </div>
-
     <div class="phi-collection-body">
       <div class="phi-collection-heading phi-collection-heading--category">
         <span class="phi-collection-heading__label" data-i18n="folder.information">FOLDER_INFORMATION</span>
         <h1><%= cfg.title || categoryName %></h1>
-        <p><%= cfg.subtitle || ('CATEGORY // ' + categoryName) %> · <%= posts.length %> FILES</p>
+        <p><%= posts.length %> FILES</p>
       </div>
-
       <div class="phi-collection-filelist">
-        <% if (!posts.length) { %>
-          <div class="phi-collection-empty" data-i18n="collection.noFiles">NO FILES CONNECTED.</div>
-        <% } %>
+        <% if (!posts.length) { %><div class="phi-collection-empty" data-i18n="collection.noFiles">NO FILES CONNECTED.</div><% } %>
         <% posts.forEach(function(post, i) { %>
           <a class="phi-collection-file" href="<%- url_for(post.path) %>">
             <span class="phi-collection-file__index"><%= String(i + 1).padStart(2, '0') %></span>

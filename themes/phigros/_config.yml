@@ -53,7 +53,6 @@ background:
 # Saturn Virtual OS / FILE_CONTENT 文章界面
 # 每篇文章可在 Front Matter 单独覆盖这些值：
 # analysis: 50
-# analysis_status: "50% ANALYZED."
 # supervisor: "deathMark"
 # category_label: "main"
 # folder_cover: "/images/xxx.jpg"
