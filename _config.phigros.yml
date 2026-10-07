@@ -1,0 +1,39 @@
+menu:
+  首页: /
+  归档: /archives
+  标签: /tags
+  分类: /categories
+  关于: /about
+judgeline:
+  enable: true
+  color: '#38bdf8'
+  speed: 4
+index:
+  excerpt_length: 140
+  show_meta: true
+post:
+  show_reading_progress: true
+  show_prev_next: true
+footer:
+  since: 2024
+  author: ''
+  powered_by: true
+fonts:
+  enable: true
+background:
+  image: /images/bg.jpg
+  blur: 12px
+  brightness: 0.35
+  grid: true
+  grid_color: 56, 189, 248
+home:
+  misc:
+    contact: ''
+    contact_url: 'mailto:'
+    social:
+      bilibili: https://space.bilibili.com/442631701
+      github: https://github.com/DMorest
+      x: https://x.com/dmorest0609
+      email: mailto:dmorest@foxmail.com
+    author_url: ''
+    friends: []

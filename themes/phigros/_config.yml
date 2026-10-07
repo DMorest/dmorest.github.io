@@ -1,0 +1,161 @@
+# ==============================================
+# Hexo Theme Phigros — 主题配置
+# 复制本文件到站点根目录为 _config.phigros.yml 后修改
+# ==============================================
+
+# 导航菜单
+menu:
+  首页: /
+  归档: /archives
+  标签: /tags
+  关于: /about
+  分类: /categories/
+
+# 判定线动效
+judgeline:
+  enable: true
+  color: "#38bdf8"
+  speed: 4          # 扫描周期，单位秒
+
+# 首页文章卡片
+index:
+  excerpt_length: 140
+  show_meta: true
+
+# 文章页
+post:
+  show_reading_progress: true
+  show_prev_next: true
+
+# 页脚
+footer:
+  since: 2024
+  author: ""        # 留空则使用站点 author
+  powered_by: true
+
+# 字体（Saira 通过 Google Fonts 加载；中文使用 CJK fallback）
+fonts:
+  enable: true
+# PhigrOS / D.O.M.E 视觉系统
+phigros:
+  system_name: "PhigrOS"
+  dome_label: "D.O.M.E"
+  accent: "#39b9e8"
+
+# 背景系统
+background:
+  image: "/images/bg.jpg"
+  blur: "5px"
+  brightness: "0.12"
+  grid: true
+  grid_color: "57, 185, 232"
+
+# Saturn Virtual OS / FILE_CONTENT 文章界面
+# 每篇文章可在 Front Matter 单独覆盖这些值：
+# analysis: 50
+# analysis_status: "50% ANALYZED."
+# supervisor: "deathMark"
+# category_label: "main"
+# folder_cover: "/images/xxx.jpg"
+# folder_title: "Transit Tide"
+# folder_subtitle: "Chapter VII"
+# folder_completion: 74
+# folder_items: 14
+saturn:
+  analysis_default: 100
+  supervisor_default: "D.O.M.E"
+  category_default: "main"
+  # Category defaults for the article FOLDER_INFORMATION panel.
+  # Per-post folder.* values have higher priority.
+  # Built-in categories shown in /categories/.
+  # Their slugs are used only for these fixed visual folder routes.
+  core_categories:
+    - name: "日志"
+      slug: "log"
+      title: "日志"
+      subtitle: "最直接的记录。"
+      cover: "/images/home/log.jpg"
+    - name: "教程"
+      slug: "tutorial"
+      title: "教程"
+      subtitle: "哈默尔恩的回响。"
+      cover: "/images/home/tutorial.jpg"
+    - name: "创作"
+      slug: "creative"
+      title: "创作"
+      subtitle: "你听见天使之乐了吗？"
+      cover: "/images/home/creation.jpg"
+  # Default cover used by /categories/ when a category has no configured image.
+  # Put your image at: themes/phigros/source/images/category-default.jpg
+  category_fallback_cover: "/images/category-default.jpg"
+  category_folders:
+    日志:
+      title: "日志"
+      subtitle: "最直接的记录。"
+      cover: ""
+      completion: 100
+    教程:
+      title: "教程"
+      subtitle: "哈默尔恩的回响。"
+      cover: ""
+      completion: 100
+    创作:
+      title: "创作"
+      subtitle: "你听见天使之乐了吗？"
+      cover: ""
+      completion: 100
+    main:
+      title: "MAIN"
+      subtitle: "MAIN_STORY"
+      cover: ""
+      completion: 100
+    tutorial:
+      title: "TUTORIAL"
+      subtitle: "TUTORIAL"
+      cover: ""
+      completion: 100
+    creative:
+      title: "CREATIVE"
+      subtitle: "CREATIVE"
+      cover: ""
+      completion: 100
+
+# 首页启动界面 / 内容配置
+# 图片请放在：themes/phigros/source/images/home/
+home:
+  timeline_count: 6
+  features:
+    - title: "日志"
+      subtitle: "最直接的记录。"
+      image: "/images/home/log.jpg"
+    - title: "教程"
+      subtitle: "哈默尔恩的回响。"
+      image: "/images/home/tutorial.jpg"
+    - title: "创作"
+      subtitle: "你听见天使之乐了吗？"
+      image: "/images/home/creation.jpg"
+  misc:
+    contact: "dmorest@foxmail.com"
+    contact_url: "mailto:dmorest@foxmail.com"
+    social:
+      bilibili: "https://space.bilibili.com/442631701"
+      github: "https://github.com/DMorest"
+      x: "https://x.com/dmorest0609"
+      email: "mailto:dmorest@foxmail.com"
+    copyright_title: "PHATASiA LOTUS LAND"
+    friends: []
+# Waline 评论系统
+# 评论服务部署在 Vercel，前端通过 CDN 加载 Waline Client。
+comments:
+  enable: true
+  waline:
+    serverURL: "https://phatasia-dm.vercel.app"
+    lang: "zh-CN"
+    dark: true
+    path: ""
+
+
+# 浏览器语言自动切换：zh-CN / ja / en
+localization:
+  auto: true
+  default: "zh-CN"

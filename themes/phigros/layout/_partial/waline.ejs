@@ -1,0 +1,25 @@
+<% if (theme.comments && theme.comments.enable !== false && page.comments !== false) { %>
+<section class="phi-comments" aria-label="Comments">
+  <div class="phi-comments__topbar">
+    <span class="phi-comments__tab">FILE_COMMENT</span>
+    <span class="phi-comments__status">SECURE CHANNEL / <%= (theme.comments.waline && theme.comments.waline.lang) || 'zh-CN' %></span>
+  </div>
+  <div class="phi-comments__body">
+    <div class="phi-comments__label">// RESONATOR CONNECTED</div>
+    <div id="waline" class="phi-waline"></div>
+  </div>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css">
+<script type="module">
+  import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+  init({
+    el: '#waline',
+    serverURL: '<%= (theme.comments.waline && theme.comments.waline.serverURL) || "" %>',
+    lang: '<%= (theme.comments.waline && theme.comments.waline.lang) || "zh-CN" %>',
+    dark: true,
+    path: '<%= page.path %>',
+    pageview: '.waline-pageview-count'
+  });
+</script>
+<% } %>

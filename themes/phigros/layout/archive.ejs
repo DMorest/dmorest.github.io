@@ -1,0 +1,38 @@
+<%
+  var posts = page.posts ? page.posts.toArray() : site.posts.toArray();
+  posts.sort(function(a, b) { return b.date - a.date; });
+  var years = {};
+  posts.forEach(function(post) {
+    var y = post.date.year();
+    if (!years[y]) years[y] = [];
+    years[y].push(post);
+  });
+%>
+
+<div class="phi-collection-page phi-collection-page--archive">
+  <div class="phi-collection-shell">
+    <div class="phi-collection-topbar">
+      <span class="phi-collection-tab">//ARCHIVE</span>
+      <span class="phi-collection-status" data-i18n="archive.database">MEMORY_DATABASE</span>
+    </div>
+
+    <div class="phi-collection-body">
+      <div class="phi-collection-filelist phi-collection-filelist--archive">
+        <% Object.keys(years).sort().reverse().forEach(function(year) { %>
+          <div class="phi-collection-group-label">
+            <span><%= year %></span>
+            <small data-i18n-number="collection.files" data-i18n-count="<%= years[year].length %>"><%= years[year].length %> FILES</small>
+          </div>
+          <% years[year].forEach(function(post, i) { %>
+            <a class="phi-collection-file" href="<%- url_for(post.path) %>">
+              <span class="phi-collection-file__index"><%= String(i + 1).padStart(2, '0') %></span>
+              <span class="phi-collection-file__date"><%= date(post.date, 'MM.DD') %></span>
+              <span class="phi-collection-file__title"><%= post.title %></span>
+              <span class="phi-collection-file__arrow">›</span>
+            </a>
+          <% }); %>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>

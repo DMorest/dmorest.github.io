@@ -1,0 +1,217 @@
+<%
+  var homeConfig = theme.home || {};
+  var featureItems = homeConfig.features || [
+    { title: '日志', subtitle: '最直接的记录。', image: '/images/home/log.jpg' },
+    { title: '教程', subtitle: '哈默尔恩的回响。', image: '/images/home/tutorial.jpg' },
+    { title: '创作', subtitle: '你听见天使之乐了吗？', image: '/images/home/creation.jpg' }
+  ];
+  var timelineCount = Number(homeConfig.timeline_count);
+  if (!isFinite(timelineCount) || timelineCount < 1) timelineCount = 6;
+
+  var timelinePosts = [];
+  site.posts.sort('date', -1).each(function (post) {
+    if (timelinePosts.length < timelineCount) timelinePosts.push(post);
+  });
+
+  var misc = homeConfig.misc || {};
+  var friendSites = misc.friends || [];
+%>
+
+<div class="phi-index phi-index--home">
+  <!-- ==========================================================
+       PhigrOS-style startup viewport
+       The existing fisheye triangular network is intentionally kept
+       untouched. It lives only inside the homepage stage and naturally
+       scrolls away together with the title.
+       ========================================================== -->
+  <section class="phi-home-stage" id="phi-home-start" data-home-panel="0" aria-label="PHATASiA LOTUS LAND">
+    <div class="phi-home-visuals" aria-hidden="true">
+      <svg class="phi-home-fisheye" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <defs>
+          <linearGradient id="phi-glow-mask-gradient" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="black" stop-opacity="0"/>
+            <stop offset="0.18" stop-color="black" stop-opacity="0"/>
+            <stop offset="0.34" stop-color="white" stop-opacity="1"/>
+            <stop offset="0.52" stop-color="white" stop-opacity="1"/>
+            <stop offset="0.70" stop-color="black" stop-opacity="0"/>
+            <stop offset="1" stop-color="black" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="phi-line-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="2.2" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="phi-line-halo" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="7" result="halo"/>
+            <feMerge>
+              <feMergeNode in="halo"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <mask id="phi-network-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="900">
+            <rect x="0" y="-900" width="1600" height="900" fill="url(#phi-glow-mask-gradient)">
+              <animate attributeName="y" from="900" to="-900" dur="7s" repeatCount="indefinite"/>
+            </rect>
+          </mask>
+        </defs>
+
+        <g class="phi-network-base" stroke="rgba(92,205,239,.30)" fill="none">
+          <%- partial('_partial/fisheye-network') %>
+        </g>
+        <g class="phi-network-halo" mask="url(#phi-network-reveal)" filter="url(#phi-line-halo)" stroke="rgba(100,224,247,.62)" fill="none">
+          <%- partial('_partial/fisheye-network') %>
+        </g>
+        <g class="phi-network-glow" mask="url(#phi-network-reveal)" filter="url(#phi-line-glow)" stroke="rgba(198,246,255,.99)" fill="none">
+          <%- partial('_partial/fisheye-network') %>
+        </g>
+      </svg>
+    </div>
+
+    <div class="phi-startup-copy">
+      <h1>PHATASiA LOTUS LAND</h1>
+      <p>最 后 一 片 失 乐 园。</p>
+    </div>
+
+    <button class="phi-home-scroll-cue" type="button" aria-label="展开首页内容" data-scroll-target="#phi-home-content">
+      <span class="phi-home-scroll-cue__chevrons" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </section>
+
+  <div class="phi-home-content" id="phi-home-content">
+    <!-- ==========================================================
+         01 / Feature slideshow
+         Put your images at themes/phigros/source/images/home/
+         and edit theme.home.features in _config.yml.
+         ========================================================== -->
+    <section class="phi-home-section phi-home-section--features" data-home-panel="1" aria-labelledby="phi-feature-title">
+      <div class="phi-home-section__heading">
+        <span>01</span>
+        <div>
+          <p class="phi-home-section__eyebrow">PHIGROS // FOLDER_SELECT</p>
+          <h2 id="phi-feature-title">SELECT A MEMORY</h2>
+        </div>
+      </div>
+
+      <div class="phi-feature-slider" data-feature-slider>
+        <div class="phi-feature-viewport">
+          <svg class="phi-feature-frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <polygon points="4,0 100,0 96,100 0,100" fill="none" vector-effect="non-scaling-stroke" />
+          </svg>
+          <div class="phi-feature-track">
+            <% featureItems.forEach(function(item, index) { %>
+              <article class="phi-feature-slide<%= index === 0 ? ' is-active' : '' %>" data-slide="<%= index %>">
+                <div class="phi-feature-slide__media">
+                  <% if (item.image) { %>
+                    <img src="<%- url_for(item.image) %>" alt="" loading="lazy">
+                  <% } %>
+                </div>
+                <div class="phi-feature-slide__shade"></div>
+                <div class="phi-feature-slide__copy">
+                  <h3><%= item.title %></h3>
+                  <p><%= item.subtitle %></p>
+                </div>
+              </article>
+            <% }); %>
+          </div>
+        </div>
+
+        <button class="phi-feature-control phi-feature-control--prev" type="button" aria-label="上一项" data-feature-prev>‹</button>
+        <button class="phi-feature-control phi-feature-control--next" type="button" aria-label="下一项" data-feature-next>›</button>
+
+        <div class="phi-feature-dots" role="tablist" aria-label="首页精选">
+          <% featureItems.forEach(function(item, index) { %>
+            <button type="button" role="tab" aria-selected="<%= index === 0 ? 'true' : 'false' %>" class="<%= index === 0 ? 'is-active' : '' %>" data-feature-dot="<%= index %>" aria-label="第 <%= index + 1 %> 项"></button>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         02 / Recent article timeline
+         ========================================================== -->
+    <section class="phi-home-section phi-home-section--timeline" data-home-panel="2" aria-labelledby="phi-timeline-title">
+      <div class="phi-home-section__heading">
+        <span>02</span>
+        <div>
+          <p class="phi-home-section__eyebrow">D.O.M.E // RECENT_MEMORY</p>
+          <h2 id="phi-timeline-title">TIMELINE</h2>
+        </div>
+      </div>
+
+      <div class="phi-timeline">
+        <% timelinePosts.forEach(function(post, index) { %>
+          <a class="phi-timeline-item" href="<%- url_for(post.path) %>">
+            <div class="phi-timeline-item__marker"><span><%= String(index + 1).padStart(2, '0') %></span></div>
+            <div class="phi-timeline-item__date"><%= date(post.date, 'YYYY.MM.DD') %></div>
+            <div class="phi-timeline-item__body">
+              <h3><%= post.title %></h3>
+              <% var excerpt = post.excerpt ? strip_html(post.excerpt) : strip_html(post.content || ''); %>
+              <% if (excerpt) { %><p><%= excerpt.substring(0, 100) %><%= excerpt.length > 100 ? '…' : '' %></p><% } %>
+            </div>
+            <span class="phi-timeline-item__arrow">›</span>
+          </a>
+        <% }); %>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         03 / Misc
+         ========================================================== -->
+    <section class="phi-home-section phi-home-section--misc" data-home-panel="3" aria-labelledby="phi-misc-title">
+      <div class="phi-home-section__heading">
+        <span>03</span>
+        <div>
+          <p class="phi-home-section__eyebrow">SYSTEM // MISCELLANEOUS</p>
+          <h2 id="phi-misc-title">MISC.</h2>
+        </div>
+      </div>
+
+      <div class="phi-misc-grid">
+        <section class="phi-misc-block phi-misc-block--author">
+          <span class="phi-misc-block__label">CONTACT</span>
+          <h3>作者</h3>
+          <% if (misc.contact) { %>
+            <a class="phi-misc-contact" href="<%- misc.contact_url || ('mailto:' + misc.contact) %>"><%= misc.contact %></a>
+          <% } %>
+          <div class="phi-socials" aria-label="作者链接">
+            <% var social = misc.social || {}; %>
+            <a class="phi-social-link<%= social.bilibili ? '' : ' is-disabled' %>" href="<%- social.bilibili || '#' %>" target="_blank" rel="noopener" aria-label="Bilibili"<%= social.bilibili ? '' : ' tabindex="-1" aria-disabled="true"' %>>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 4.3 5.6 2.5M15.8 4.3l2.6-1.8M4.7 7.2h14.6a2 2 0 0 1 2 2v7.6a2 2 0 0 1-2 2H4.7a2 2 0 0 1-2-2V9.2a2 2 0 0 1 2-2Z"/><path d="M8.5 11.2v3.1M15.5 11.2v3.1M8.5 12.7h0M15.5 12.7h0"/></svg>
+            </a>
+            <a class="phi-social-link<%= social.github ? '' : ' is-disabled' %>" href="<%- social.github || '#' %>" target="_blank" rel="noopener" aria-label="GitHub"<%= social.github ? '' : ' tabindex="-1" aria-disabled="true"' %>>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 19.5c-4 .9-4-1.9-5.6-2.3M14.9 19.5v-2.6c0-.7.3-1.4.9-1.9 2.8-.3 4.2-1.4 4.2-4.1 0-.9-.3-1.8-.9-2.5.1-.3.4-1.6-.1-2.5 0 0-1.1-.4-3.6 1a12.4 12.4 0 0 0-6.6 0c-2.5-1.4-3.6-1-3.6-1-.5.9-.2 2.2-.1 2.5-.6.7-.9 1.6-.9 2.5 0 2.7 1.4 3.8 4.2 4.1.6.5.9 1.2.9 1.9v2.6"/></svg>
+            </a>
+            <a class="phi-social-link<%= social.x ? '' : ' is-disabled' %>" href="<%- social.x || '#' %>" target="_blank" rel="noopener" aria-label="X"<%= social.x ? '' : ' tabindex="-1" aria-disabled="true"' %>>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.657l-5.214-6.817-5.965 6.817H1.683l7.73-8.835L1.254 2.25h6.826l4.713 6.231L18.244 2.25Zm-1.161 17.52h1.833L7.155 4.126H5.188L17.083 19.77Z"/></svg>
+            </a>
+            <a class="phi-social-link" href="<%- social.email || ('mailto:' + (misc.contact || '')) %>" aria-label="邮箱">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="1.3"/><path d="m4 7 8 6 8-6"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <section class="phi-misc-block phi-misc-block--friends">
+          <span class="phi-misc-block__label">LINKS</span>
+          <h3>友站</h3>
+          <% if (friendSites.length) { %>
+            <div class="phi-misc-links">
+              <% friendSites.forEach(function(site) { %>
+                <a href="<%- site.url %>" target="_blank" rel="noopener"><span><%= site.name %></span><span>↗</span></a>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <p>暂无友站。</p>
+          <% } %>
+        </section>
+      </div>
+
+      <div class="phi-misc-copyright">
+        <div><%= misc.copyright_title || config.title %></div>
+        <p>© <%= theme.footer.since || '2024' %> - <%= new Date().getFullYear() %> <%= theme.footer.author || config.author || config.title %></p>
+        <p>Powered by Hexo · Theme Phigros</p>
+      </div>
+    </section>
+  </div>
+</div>

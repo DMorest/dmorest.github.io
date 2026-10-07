@@ -1,0 +1,32 @@
+<%
+  var categoryFolders = (theme.saturn && theme.saturn.category_folders) || {};
+  var cfg = categoryFolders[page.category] || {};
+%>
+
+<div class="phi-collection-page phi-collection-page--category">
+  <div class="phi-collection-shell">
+    <div class="phi-collection-topbar">
+      <span class="phi-collection-tab">//COLLECTION</span>
+      <span class="phi-collection-status" data-i18n="folder.content">FOLDER_CONTENT</span>
+    </div>
+
+    <div class="phi-collection-body">
+      <div class="phi-collection-heading phi-collection-heading--category">
+        <span class="phi-collection-heading__label" data-i18n="folder.information">FOLDER_INFORMATION</span>
+        <h1><%= cfg.title || page.category %></h1>
+        <p><%= cfg.subtitle || ('CATEGORY // ' + page.category) %> · <%= page.posts.length %> FILES</p>
+      </div>
+
+      <div class="phi-collection-filelist">
+        <% page.posts.sort('date', -1).each(function(post, i) { %>
+          <a class="phi-collection-file" href="<%- url_for(post.path) %>">
+            <span class="phi-collection-file__index"><%= String(i + 1).padStart(2, '0') %></span>
+            <span class="phi-collection-file__date"><%= date(post.date, 'YYYY.MM.DD') %></span>
+            <span class="phi-collection-file__title"><%= post.title %></span>
+            <span class="phi-collection-file__arrow">›</span>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>

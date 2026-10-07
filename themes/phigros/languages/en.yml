@@ -1,0 +1,20 @@
+post:
+  words: words
+  minutes: min read
+  prev: PREV
+  next: NEXT
+  posted: Posted
+archive:
+  title: Archives
+  total: "%d posts in total"
+tag:
+  title: Tags
+category:
+  title: Categories
+  all: All Categories
+  posts: posts
+pagination:
+  prev: PREV
+  next: NEXT
+taxonomy:
+  posts: posts

@@ -1,0 +1,46 @@
+# ==============================================
+# Hexo Theme Phigros — 主题配置
+# 复制本文件到站点根目录为 _config.phigros.yml 后修改
+# ==============================================
+
+# 导航菜单
+menu:
+  首页: /
+  归档: /archives
+  标签: /tags
+  分类: /categories
+  关于: /about
+
+# 判定线动效
+judgeline:
+  enable: true
+  color: "#38bdf8"
+  speed: 4          # 扫描周期，单位秒
+
+# 首页文章卡片
+index:
+  excerpt_length: 140
+  show_meta: true
+
+# 文章页
+post:
+  show_reading_progress: true
+  show_prev_next: true
+
+# 页脚
+footer:
+  since: 2024
+  author: ""        # 留空则使用站点 author
+  powered_by: true
+
+# 字体（关闭则使用系统字体）
+fonts:
+  enable: true
+
+# ==================== 背景特效 ====================
+background:
+  image: /images/bg.jpg      # 背景图片路径，留空则只显示纯色
+  blur: 12px                 # 模糊程度
+  brightness: 0.35           # 亮度 (0~1)
+  grid: true                 # 是否显示三角网格
+  grid_color: "56, 189, 248" # 网格颜色 (RGB)，默认是主题蓝

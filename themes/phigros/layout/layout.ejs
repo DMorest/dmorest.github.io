@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="<%= config.language || 'zh-CN' %>">
+<%- partial('_partial/head') %>
+<body class="phi-body <%= (page && (page.type === 'index' || page.path === 'index.html' || page.path === '')) ? 'is-home-page' : '' %><%= (page && (page.layout === 'post' || page.type === 'post')) ? ' is-post-page' : '' %>">
+  <div class="phi-bg-layer" aria-hidden="true">
+    <% if (theme.background && theme.background.image) { %>
+    <div class="phi-bg-image" style="background-image: url('<%- url_for(theme.background.image) %>'); filter: blur(<%= theme.background.blur || '12px' %>) brightness(<%= theme.background.brightness || 0.35 %>);"></div>
+    <% } %>
+    <div class="phi-bg-overlay"></div>
+
+  </div>
+
+  <%- partial('_partial/judgeline') %>
+  <%- partial('_partial/header') %>
+  <main class="phi-main <%= (page && (page.type === 'index' || page.path === 'index.html' || page.path === '')) ? 'phi-main--home' : '' %>">
+    <%- body %>
+  </main>
+  <%- partial('_partial/footer') %>
+  <script src="<%- url_for('/js/main.js') %>"></script>
+</body>
+</html>

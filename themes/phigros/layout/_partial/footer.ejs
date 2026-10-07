@@ -1,0 +1,16 @@
+<footer class="phi-footer">
+  <div class="phi-footer__inner">
+    <div class="phi-footer__line" aria-hidden="true"></div>
+    <p class="phi-footer__text">
+      © <%= theme.footer.since || '2024' %> - <%= new Date().getFullYear() %>
+      <span class="phi-footer__author"><%= theme.footer.author || config.author || config.title %></span>
+    </p>
+    <% if (theme.footer.powered_by !== false) { %>
+    <p class="phi-footer__meta">
+      Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
+      <span class="phi-footer__sep">·</span>
+      Theme <a href="https://github.com/" target="_blank" rel="noopener">Phigros</a>
+    </p>
+    <% } %>
+  </div>
+</footer>

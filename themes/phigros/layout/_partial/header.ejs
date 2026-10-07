@@ -1,0 +1,44 @@
+
+<header class="phi-header">
+  <%
+    var isHomePage = page && (page.type === 'index' || page.path === 'index.html' || page.path === '');
+    var homeHref = url_for('/');
+    if (!isHomePage) homeHref += '?screen=1';
+  %>
+  <div class="phi-header__inner">
+    <a href="<%- homeHref %>" class="phi-brand" aria-label="<%= config.title %>">
+      <span class="phi-brand__title">PHIGROS TERMINAL</span>
+    </a>
+
+    <nav class="phi-nav" id="phi-nav" aria-label="Primary navigation" data-i18n-aria="nav.aria">
+      <ul class="phi-nav__list">
+        <% Object.keys(theme.menu || {}).forEach(function(name) { %>
+          <%
+            var path = theme.menu[name];
+            var currentPath = page.path || '';
+            var isActive = false;
+            if (path === '/') {
+              isActive = currentPath === '' || currentPath === 'index.html';
+            } else {
+              isActive = currentPath.indexOf(path.replace(/^\//, '')) === 0;
+            }
+          %>
+          <li class="phi-nav__item <%= isActive ? 'is-active' : '' %>">
+            <a href="<%- url_for(path) %>" class="phi-nav__link">
+              <span class="phi-nav__text" data-i18n-nav-key="<%= name %>"><%= name %></span>
+              <span class="phi-nav__indicator" aria-hidden="true"></span>
+            </a>
+          </li>
+        <% }); %>
+      </ul>
+    </nav>
+
+    <div class="phi-header__status" aria-hidden="true" style="display:none">
+      D.O.M.E <span data-phi-clock></span>
+    </div>
+
+    <button class="phi-nav__toggle" id="phi-nav-toggle" aria-label="Toggle menu" data-i18n-aria="nav.toggle" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>

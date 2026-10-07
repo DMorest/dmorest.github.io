@@ -1,0 +1,27 @@
+<% if (page.total > 1) { %>
+<nav class="phi-pagination" aria-label="Pagination">
+  <% if (page.prev) { %>
+    <a href="<%- url_for(page.prev_link) %>" class="phi-pagination__btn phi-pagination__btn--prev">
+      <span class="phi-pagination__arrow">◤</span>
+      <span><%= __('pagination.prev') %></span>
+    </a>
+  <% } else { %>
+    <span class="phi-pagination__btn is-disabled"><%= __('pagination.prev') %></span>
+  <% } %>
+
+  <span class="phi-pagination__current">
+    <span class="phi-pagination__num"><%= page.current %></span>
+    <span class="phi-pagination__slash">/</span>
+    <span class="phi-pagination__total"><%= page.total %></span>
+  </span>
+
+  <% if (page.next) { %>
+    <a href="<%- url_for(page.next_link) %>" class="phi-pagination__btn phi-pagination__btn--next">
+      <span><%= __('pagination.next') %></span>
+      <span class="phi-pagination__arrow">◢</span>
+    </a>
+  <% } else { %>
+    <span class="phi-pagination__btn is-disabled"><%= __('pagination.next') %></span>
+  <% } %>
+</nav>
+<% } %>

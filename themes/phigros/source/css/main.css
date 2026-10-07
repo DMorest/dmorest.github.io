@@ -1,0 +1,3368 @@
+
+/* ============================================================
+   Hexo Theme: Phigros UI
+   PhigrOS / D.O.M.E inspired visual system
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600;700&display=swap");
+
+:root {
+  --phi-bg: #000000;
+  --phi-bg-2: #000000;
+  --phi-panel: rgba(24, 31, 34, .94);
+  --phi-panel-2: rgba(35, 43, 46, .96);
+  --phi-line: rgba(202, 218, 220, .26);
+  --phi-line-strong: rgba(202, 218, 220, .58);
+  --phi-text: #e8eeee;
+  --phi-muted: #8d9a9d;
+  --phi-cyan: #39b9e8;
+  --phi-cyan-2: #1b86b1;
+  --phi-blue: #0d6d9b;
+  --phi-yellow: #e6c95c;
+  --phi-orange: #d99648;
+  --phi-red: #d86d68;
+  --phi-green: #6cc5a0;
+  --phi-radius: 2px;
+  --phi-cut: 12px;
+  --phi-shadow: 0 18px 50px rgba(0,0,0,.38);
+  --phi-mono: "Saira", "Noto Sans CJK SC", "Noto Sans CJK", "Noto Sans SC", system-ui, sans-serif;
+  --phi-sans: "Saira", "Noto Sans CJK SC", "Noto Sans CJK", "Noto Sans SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --phi-code: Consolas, "Cascadia Mono", "Noto Sans Mono CJK SC", "Noto Sans Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  min-height: 100%;
+  background: var(--phi-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--phi-text);
+  background: var(--phi-bg);
+  font-family: var(--phi-sans);
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
+
+::selection {
+  color: #061016;
+  background: var(--phi-cyan);
+}
+
+/* ---------- ambient system background ---------- */
+
+.phi-bg-layer,
+.phi-bg-image,
+.phi-bg-overlay,
+.phi-bg-grid,
+.phi-bg-glints {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.phi-bg-layer { z-index: -5; overflow: hidden; }
+
+.phi-bg-image {
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.06);
+}
+
+.phi-bg-overlay {
+  background: #000;
+}
+
+.phi-bg-grid {
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(var(--grid-color), .22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid-color), .22) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+
+.phi-bg-glints {
+  opacity: .16;
+  background:
+    linear-gradient(116deg, transparent 0 42%, rgba(var(--grid-color),.8) 42.15%, transparent 42.3%),
+    linear-gradient(294deg, transparent 0 57%, rgba(var(--grid-color),.5) 57.1%, transparent 57.25%);
+  background-size: 680px 680px, 920px 920px;
+  animation: phi-glint 18s linear infinite;
+}
+
+@keyframes phi-glint {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 680px 680px, -920px 920px; }
+}
+
+/* ---------- global frame ---------- */
+
+.phi-main {
+  width: min(1180px, calc(100% - 36px));
+  margin: 0 auto;
+  padding: 54px 0 90px;
+  position: relative;
+  z-index: 2;
+}
+
+/* The Saturn reference does not use the old floating diagonal strokes
+   at the sides of the page, so the global pseudo-lines are intentionally removed. */
+
+/* ---------- PhigrOS top shell ---------- */
+
+.phi-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid rgba(197,213,215,.18);
+  background: rgba(7,10,12,.88);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 35px rgba(0,0,0,.28);
+}
+
+/* v6.4: remove the decorative cyan top rail from the header. */
+.phi-header::before {
+  display: none;
+}
+
+.phi-header__inner {
+  width: min(1240px, calc(100% - 30px));
+  min-height: 70px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.phi-brand {
+  position: relative;
+  min-width: 225px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 16px 9px 12px;
+  border-left: 3px solid var(--phi-cyan);
+  background: transparent;
+  clip-path: polygon(0 0, 94% 0, 100% 50%, 94% 100%, 0 100%);
+}
+
+.phi-brand__mark {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: #061116;
+  background: var(--phi-cyan);
+  font-family: var(--phi-mono);
+  font-weight: 700;
+  transform: skew(-10deg);
+}
+
+.phi-brand__title {
+  font-family: var(--phi-mono);
+  font-size: 14px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.phi-nav { margin-left: auto; }
+
+.phi-nav__list {
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.phi-nav__item { position: relative; }
+
+.phi-nav__link {
+  min-height: 52px;
+  padding: 0 17px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: #9ca9ac;
+  font-family: var(--phi-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: color .2s, background .2s;
+}
+
+.phi-nav__link::before {
+  content: "";
+  position: absolute;
+  inset: 10px 0;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  transform: skew(-12deg);
+  transition: border-color .2s, background .2s;
+}
+
+.phi-nav__link:hover { color: #f2fbfc; }
+
+/* v6.4: active navigation item uses the solid white Saturn-style plate. */
+.phi-nav__item.is-active .phi-nav__link {
+  color: #111719;
+  z-index: 1;
+}
+
+.phi-nav__item.is-active .phi-nav__link::before {
+  border-color: #eef2f3;
+  background: #eef2f3;
+}
+
+.phi-nav__item.is-active .phi-nav__text {
+  position: relative;
+  z-index: 2;
+}
+
+.phi-nav__indicator {
+  display: none;
+}
+
+.phi-nav__toggle {
+  display: none;
+  margin-left: auto;
+  border: 1px solid var(--phi-line);
+  background: #111719;
+  color: var(--phi-cyan);
+  padding: 9px;
+}
+.phi-nav__toggle span {
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  margin: 4px;
+}
+
+/* ---------- system label / section bars ---------- */
+
+.phi-hero,
+.phi-taxonomy__header,
+.phi-archive__header,
+.phi-post__header {
+  position: relative;
+}
+
+.phi-hero {
+  min-height: 285px;
+  display: grid;
+  align-items: center;
+  padding: 58px 64px;
+  margin-bottom: 44px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(16,28,32,.96), rgba(16,25,28,.76)),
+    repeating-linear-gradient(135deg, transparent 0 10px, rgba(255,255,255,.025) 11px 12px);
+  border: 1px solid var(--phi-line);
+  clip-path: polygon(0 0, 98% 0, 100% 12%, 100% 88%, 98% 100%, 0 100%);
+  box-shadow: var(--phi-shadow);
+}
+
+.phi-hero::before {
+  content: "PHIGROS / D.O.M.E";
+  position: absolute;
+  right: 24px;
+  top: 17px;
+  color: rgba(220,235,236,.32);
+  font: 600 10px var(--phi-mono);
+  letter-spacing: .18em;
+}
+
+.phi-hero::after {
+  content: "";
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  right: -150px;
+  bottom: -260px;
+  border: 1px solid rgba(57,185,232,.28);
+  border-radius: 50%;
+  box-shadow: 0 0 0 34px rgba(57,185,232,.025), 0 0 0 68px rgba(57,185,232,.02);
+}
+
+.phi-hero__content { position: relative; z-index: 2; max-width: 800px; }
+
+.phi-hero__eyebrow,
+.phi-taxonomy__eyebrow,
+.phi-archive__eyebrow {
+  margin: 0 0 8px;
+  color: var(--phi-cyan);
+  font: 600 11px var(--phi-mono);
+  letter-spacing: .16em;
+}
+
+.phi-hero__eyebrow::after,
+.phi-taxonomy__eyebrow::after,
+.phi-archive__eyebrow::after {
+  content: "  /  SYSTEM";
+  color: #657377;
+}
+
+.phi-hero__title {
+  margin: 0;
+  font-family: var(--phi-mono);
+  font-size: clamp(36px, 7vw, 78px);
+  line-height: 1;
+  letter-spacing: -.05em;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(57,185,232,.13);
+}
+
+.phi-hero__subtitle {
+  max-width: 680px;
+  margin: 20px 0 0;
+  color: #aab8ba;
+  font-size: 14px;
+}
+
+.phi-hero__deco {
+  position: absolute;
+  right: 50px;
+  bottom: 40px;
+  display: flex;
+  gap: 7px;
+}
+.phi-hero__deco span {
+  width: 52px;
+  height: 7px;
+  border: 1px solid var(--phi-cyan);
+  background: rgba(57,185,232,.18);
+  transform: skew(-32deg);
+}
+.phi-hero__deco span:nth-child(2) { width: 24px; opacity: .65; }
+.phi-hero__deco span:nth-child(3) { width: 10px; opacity: .35; }
+
+/* ---------- collection-like article grid ---------- */
+
+.phi-posts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.phi-posts__item {
+  animation: phi-in .45s both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes phi-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.phi-card {
+  height: 100%;
+  min-height: 188px;
+  position: relative;
+  background: var(--phi-panel);
+  border: 1px solid rgba(196,213,215,.25);
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0,0,0,.2);
+  transition: transform .22s, border-color .22s, background .22s;
+  clip-path: polygon(0 0, 98% 0, 100% 12%, 100% 100%, 2% 100%, 0 88%);
+}
+
+.phi-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--phi-cyan);
+  opacity: .65;
+}
+
+.phi-card::after {
+  content: "";
+  position: absolute;
+  right: -34px;
+  bottom: -34px;
+  width: 100px;
+  height: 100px;
+  border: 1px solid rgba(57,185,232,.15);
+  transform: rotate(45deg);
+}
+
+.phi-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(57,185,232,.7);
+  background: rgba(29,39,42,.97);
+}
+
+.phi-card__link {
+  display: block;
+  height: 100%;
+  padding: 24px 26px 21px 29px;
+}
+
+.phi-card__tags,
+.phi-post__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.phi-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 21px;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  font: 700 10px var(--phi-mono);
+  letter-spacing: .07em;
+  line-height: 1.2;
+}
+
+.phi-tag--cat { color: #aeb9bb; border-color: #556164; }
+
+.phi-card__title {
+  margin: 17px 0 9px;
+  max-width: 92%;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.phi-card__excerpt {
+  margin: 0;
+  color: #8f9b9e;
+  font-size: 13px;
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.phi-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 18px;
+  color: #697679;
+  font: 10px var(--phi-mono);
+  text-transform: uppercase;
+}
+
+.phi-card__dot,
+.phi-post__dot {
+  width: 4px;
+  height: 4px;
+  background: var(--phi-cyan);
+  transform: rotate(45deg);
+}
+
+/* ---------- post / D.O.M.E console ---------- */
+
+.phi-post,
+.phi-taxonomy,
+.phi-archive {
+  position: relative;
+}
+
+.phi-post__header,
+.phi-taxonomy__header,
+.phi-archive__header {
+  padding: 34px 38px;
+  margin-bottom: 22px;
+  border: 1px solid var(--phi-line);
+  background:
+    linear-gradient(135deg, rgba(35,44,47,.96), rgba(15,21,24,.96)),
+    repeating-linear-gradient(135deg, transparent 0 8px, rgba(255,255,255,.02) 9px);
+  clip-path: polygon(0 0, 99% 0, 100% 18%, 100% 100%, 1% 100%, 0 82%);
+}
+
+.phi-post__header::before,
+.phi-taxonomy__header::before,
+.phi-archive__header::before {
+  content: "D.O.M.E // DATA NODE";
+  position: absolute;
+  top: -1px;
+  right: 22px;
+  padding: 4px 10px;
+  background: var(--phi-cyan);
+  color: #071117;
+  font: 700 9px var(--phi-mono);
+  letter-spacing: .1em;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+.phi-post__title,
+.phi-taxonomy__title,
+.phi-archive__title {
+  margin: 13px 0 12px;
+  font-size: clamp(30px, 5vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+
+.phi-post__meta,
+.phi-post__taglist {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  color: #7e8b8e;
+  font: 10px var(--phi-mono);
+}
+
+.phi-post__taglist { margin-top: 17px; }
+
+.phi-progress {
+  position: fixed;
+  z-index: 80;
+  top: 72px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(255,255,255,.04);
+}
+.phi-progress__bar {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--phi-cyan-2), var(--phi-cyan));
+  box-shadow: 0 0 12px rgba(57,185,232,.75);
+}
+
+.phi-post__content {
+  position: relative;
+  padding: 42px clamp(20px, 5vw, 72px);
+  background: rgba(12,17,19,.76);
+  border: 1px solid rgba(190,207,209,.17);
+  box-shadow: var(--phi-shadow);
+}
+
+.phi-post__content::before {
+  content: "ARCHIVE DATA";
+  position: absolute;
+  right: 18px;
+  top: 17px;
+  color: rgba(170,190,193,.22);
+  font: 9px var(--phi-mono);
+  letter-spacing: .18em;
+}
+
+.phi-post__content h2,
+.phi-post__content h3 {
+  position: relative;
+  margin-top: 2.1em;
+  padding: 9px 14px;
+  color: #f0f5f5;
+  background: linear-gradient(90deg, rgba(57,185,232,.12), transparent);
+  border-left: 3px solid var(--phi-cyan);
+  font-family: var(--phi-mono);
+}
+
+.phi-post__content h2::after,
+.phi-post__content h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 80px;
+  height: 1px;
+  background: var(--phi-cyan);
+}
+
+.phi-post__content p { color: #c0cbcd; }
+.phi-post__content a {
+  color: var(--phi-cyan);
+  border-bottom: 1px dashed rgba(57,185,232,.55);
+}
+.phi-post__content a:hover { color: white; }
+
+.phi-post__content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 28px auto;
+  border: 1px solid rgba(195,213,215,.25);
+  box-shadow: 0 15px 35px rgba(0,0,0,.35);
+}
+
+.phi-post__content blockquote {
+  margin: 24px 0;
+  padding: 14px 20px;
+  color: #9eacad;
+  border-left: 3px solid var(--phi-yellow);
+  background: rgba(230,201,92,.045);
+}
+
+.phi-post__content code {
+  padding: 2px 5px;
+  color: #bcecff;
+  background: #101a1e;
+  border: 1px solid #26383e;
+  font-family: var(--phi-mono);
+}
+
+.phi-post__content pre {
+  overflow-x: auto;
+  padding: 18px;
+  background: #070b0d;
+  border: 1px solid #27373b;
+  border-left: 3px solid var(--phi-cyan-2);
+}
+
+.phi-post__content pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.phi-post__content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 13px;
+}
+.phi-post__content th,
+.phi-post__content td {
+  padding: 9px 11px;
+  border: 1px solid #334247;
+  text-align: left;
+}
+.phi-post__content th {
+  color: var(--phi-cyan);
+  background: #142025;
+  font-family: var(--phi-mono);
+}
+
+/* ---------- archive ---------- */
+
+.phi-archive__count,
+.phi-taxonomy__count {
+  margin: 0;
+  color: #6e7b7e;
+  font: 11px var(--phi-mono);
+}
+
+.phi-archive__year {
+  margin: 0 0 34px;
+}
+
+.phi-archive__year-label {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  padding: 9px 13px;
+  color: #dbe5e6;
+  background: #121b1e;
+  border: 1px solid #2c3b3f;
+  font: 700 14px var(--phi-mono);
+}
+
+.phi-archive__year-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--phi-cyan);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px rgba(57,185,232,.5);
+}
+.phi-archive__year-count {
+  margin-left: auto;
+  color: #6d7b7e;
+  font-size: 10px;
+}
+
+.phi-archive__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid #304045;
+}
+
+.phi-archive__item { border-bottom: 1px solid rgba(192,209,211,.10); }
+.phi-archive__link {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 20px;
+  padding: 13px 16px;
+  transition: background .2s, padding-left .2s;
+}
+.phi-archive__link:hover {
+  padding-left: 24px;
+  background: rgba(57,185,232,.055);
+}
+.phi-archive__date { color: var(--phi-cyan); font: 10px var(--phi-mono); }
+.phi-archive__post-title { color: #b8c3c5; }
+
+/* ---------- tags / categories ---------- */
+
+.phi-tagcloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 25px;
+  background: rgba(14,20,22,.8);
+  border: 1px solid #2d3b3f;
+}
+
+.phi-tagcloud__item {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: #151e21;
+  transition: transform .18s, background .18s;
+}
+.phi-tagcloud__item:hover {
+  transform: translateY(-2px);
+  background: #1d2b30;
+}
+.phi-tagcloud__count { color: #718083; font: 10px var(--phi-mono); }
+
+.phi-catgrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.phi-catgrid__item {
+  min-height: 86px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  gap: 9px;
+  align-items: center;
+  border: 1px solid #304045;
+  background: #131b1e;
+  transition: border-color .2s, transform .2s;
+}
+.phi-catgrid__item:hover {
+  transform: translateY(-2px);
+  border-color: var(--phi-cyan);
+}
+.phi-catgrid__mark {
+  color: var(--phi-cyan);
+  font-size: 12px;
+}
+.phi-catgrid__name { font-weight: 700; }
+.phi-catgrid__count { color: #667478; font: 10px var(--phi-mono); }
+
+/* ---------- pagination / prev-next ---------- */
+
+.phi-pagination,
+.phi-post__nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: stretch;
+  margin-top: 30px;
+}
+
+.phi-pagination__btn,
+.phi-post__nav-item {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border: 1px solid #334348;
+  background: rgba(17,25,28,.9);
+  color: #9ca9ac;
+  font: 11px var(--phi-mono);
+  transition: border-color .2s, color .2s, background .2s;
+}
+.phi-pagination__btn:hover,
+.phi-post__nav-item:hover {
+  color: white;
+  border-color: var(--phi-cyan);
+  background: rgba(57,185,232,.07);
+}
+.phi-pagination__btn--next { justify-content: flex-end; }
+.phi-pagination__arrow { color: var(--phi-cyan); }
+.phi-pagination__btn.is-disabled { opacity: .3; pointer-events: none; }
+
+.phi-pagination__current {
+  min-width: 82px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #334348;
+  background: #11191c;
+  font-family: var(--phi-mono);
+}
+.phi-pagination__num { color: var(--phi-cyan); font-weight: 700; }
+.phi-pagination__slash,
+.phi-pagination__total { color: #5e6b6e; }
+
+.phi-post__nav-item { display: flex; flex-direction: column; align-items: flex-start; }
+.phi-post__nav-item--next { align-items: flex-end; text-align: right; }
+.phi-post__nav-label { color: var(--phi-cyan); font-size: 9px; }
+.phi-post__nav-title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- footer ---------- */
+
+.phi-footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid rgba(197,213,215,.15);
+  background: #080c0e;
+}
+
+.phi-footer__inner {
+  width: min(1180px, calc(100% - 36px));
+  margin: 0 auto;
+  padding: 26px 0 32px;
+}
+
+.phi-footer__line {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 14px;
+  background: linear-gradient(90deg, var(--phi-cyan), transparent 40%);
+  opacity: .45;
+}
+
+.phi-footer__text,
+.phi-footer__meta {
+  margin: 4px 0;
+  color: #637074;
+  font: 10px var(--phi-mono);
+}
+.phi-footer__author { color: #9ba8aa; margin-left: 8px; }
+.phi-footer a { color: #8ca2a6; }
+.phi-footer a:hover { color: var(--phi-cyan); }
+.phi-footer__sep { margin: 0 8px; color: #394649; }
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 820px) {
+  .phi-header__inner { min-height: 62px; }
+  .phi-brand { min-width: 0; padding-right: 12px; }
+  .phi-brand__title { font-size: 11px; }
+  .phi-nav { display: none; }
+  .phi-nav.is-open {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 62px;
+    padding: 8px 14px 14px;
+    background: rgba(7,10,12,.97);
+    border-bottom: 1px solid var(--phi-line);
+  }
+  .phi-nav.is-open .phi-nav__list { display: grid; }
+  .phi-nav__link { min-height: 45px; }
+  .phi-nav__toggle { display: block; }
+  .phi-main { width: min(100% - 22px, 720px); padding-top: 26px; }
+  .phi-hero { min-height: 250px; padding: 42px 28px; }
+  .phi-posts { grid-template-columns: 1fr; }
+  .phi-catgrid { grid-template-columns: 1fr 1fr; }
+  .phi-post__header, .phi-taxonomy__header, .phi-archive__header { padding: 28px 22px; }
+}
+
+@media (max-width: 520px) {
+  .phi-brand__mark { width: 25px; height: 25px; }
+  .phi-brand__title { max-width: 145px; overflow: hidden; text-overflow: ellipsis; }
+  .phi-hero { padding: 36px 20px; }
+  .phi-hero__title { font-size: 38px; }
+  .phi-hero__deco { right: 18px; bottom: 20px; }
+  .phi-card__link { padding: 20px 19px 18px 23px; }
+  .phi-card__title { font-size: 19px; }
+  .phi-post__content { padding: 32px 18px; }
+  .phi-catgrid { grid-template-columns: 1fr; }
+  .phi-pagination { grid-template-columns: 1fr 1fr; }
+  .phi-pagination__current { grid-column: 1 / -1; grid-row: 1; min-height: 38px; }
+  .phi-pagination__btn { min-height: 46px; }
+  .phi-post__nav { grid-template-columns: 1fr; }
+  .phi-post__nav-item--next { align-items: flex-start; text-align: left; }
+}
+
+/* ---------- accessibility / reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ============================================================
+   Saturn Virtual OS — mouse gyro / parallax interaction
+   Desktop only: the cursor gently tilts the file viewer as if it were
+   reacting to a physical device gyroscope. The effect is intentionally
+   restrained so text remains comfortable to read.
+   ============================================================ */
+.phi-file-view {
+  --gyro-x: 0deg;
+  --gyro-y: 0deg;
+  --gyro-z: 0deg;
+  --gyro-depth: 0px;
+  transform: perspective(1800px) rotateX(var(--gyro-y)) rotateY(var(--gyro-x)) rotateZ(var(--gyro-z)) translate3d(0, var(--gyro-depth), 0);
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transition: transform .18s cubic-bezier(.2,.75,.25,1);
+}
+
+.phi-file-view .phi-folder-panel,
+.phi-file-view .phi-file-panel {
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .phi-file-view.is-gyro-active {
+    transition: transform .08s linear;
+  }
+
+  .phi-file-view.is-gyro-active .phi-folder-panel {
+    transform: perspective(1200px) rotateY(calc(0.35deg + var(--gyro-x) * .28)) translate3d(calc(var(--gyro-x) * -0.55), calc(var(--gyro-y) * .35), 0);
+  }
+
+  .phi-file-view.is-gyro-active .phi-file-panel {
+    transform: translate3d(calc(var(--gyro-x) * .45), calc(var(--gyro-y) * -.25), 0);
+  }
+}
+
+@media (max-width: 780px), (prefers-reduced-motion: reduce) {
+  .phi-file-view {
+    transform: none !important;
+    transition: none;
+  }
+
+  .phi-file-view .phi-folder-panel,
+  .phi-file-view .phi-file-panel {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Saturn Virtual OS — FILE CONTENT viewer
+   Screenshot-matched article interface
+   ============================================================ */
+
+.phi-file-view {
+  width: min(1080px, 100%);
+  margin: 18px auto 0;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* ----- left FOLDER_INFORMATION panel ----- */
+.phi-folder-panel {
+  min-width: 0;
+  color: #dce5e6;
+  transform: none;
+  transform-origin: center center;
+}
+
+.phi-folder-head,
+.phi-folder-section {
+  position: relative;
+  min-height: 31px;
+  padding: 5px 10px 5px 12px;
+  background: #1386bf;
+  color: #f1fbff;
+  font: 600 13px/21px var(--phi-mono);
+  letter-spacing: .035em;
+  clip-path: none;
+}
+
+.phi-folder-head::after,
+.phi-folder-section::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: 5px;
+  width: 28px;
+  height: 1px;
+  background: rgba(255,255,255,.45);
+}
+
+.phi-folder-cover {
+  height: 143px;
+  position: relative;
+  overflow: hidden;
+  background: #18262b;
+  border-left: 1px solid #34484d;
+  border-right: 1px solid #34484d;
+}
+
+.phi-folder-cover.is-empty {
+  background:
+    linear-gradient(135deg, transparent 48%, rgba(57,185,232,.18) 49%, transparent 50%),
+    #152126;
+}
+
+.phi-folder-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(.8) contrast(1.08);
+}
+
+.phi-folder-cover__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.05) 20%, rgba(0,0,0,.75) 100%);
+}
+
+.phi-folder-cover__info {
+  position: absolute;
+  left: 10px;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  text-shadow: 0 1px 3px #000;
+}
+
+.phi-folder-cover__info strong {
+  font-size: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phi-folder-cover__sub,
+.phi-folder-cover__info > span:last-child {
+  font: 9px var(--phi-mono);
+  color: #dce6e7;
+}
+
+.phi-folder-cover__sub { margin-bottom: 3px; }
+
+.phi-folder-cover__line {
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 100%;
+  height: 2px;
+  background: rgba(255,255,255,.8);
+  box-shadow: 0 0 6px rgba(255,255,255,.22);
+}
+
+.phi-folder-section {
+  margin-top: 10px;
+  background: #29434b;
+  clip-path: none;
+}
+
+.phi-folder-list {
+  padding: 4px 0;
+  background: rgba(12,20,23,.92);
+  border-left: 1px solid #263a40;
+  border-right: 1px solid #263a40;
+}
+
+.phi-folder-item {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  color: #6f7e82;
+  background: rgba(28,42,46,.88);
+  border-bottom: 2px solid #111c20;
+  font-size: 11px;
+  line-height: 1.25;
+  transition: color .15s, background .15s, padding-left .15s;
+}
+
+.phi-folder-item:hover {
+  color: #dce9eb;
+  background: #294048;
+  padding-left: 14px;
+}
+
+.phi-folder-item.is-current {
+  color: #24343a;
+  background: #eef2f1;
+  border-left: 4px solid #1b91c9;
+  padding-left: 7px;
+}
+
+.phi-folder-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 13px;
+  padding: 8px 12px 0;
+  border-top: 1px solid #526367;
+  color: #879599;
+  font: 9px var(--phi-mono);
+}
+
+.phi-folder-footer a {
+  align-self: flex-start;
+  color: #148bc5;
+  font-size: 20px;
+  letter-spacing: -.04em;
+}
+
+/* ----- right FILE_CONTENT panel ----- */
+.phi-file-panel {
+  min-width: 0;
+  position: relative;
+  background: rgba(10,16,18,.78);
+  border: 1px solid rgba(88,119,128,.40);
+  box-shadow: 0 20px 55px rgba(0,0,0,.35);
+  isolation: isolate;
+  backdrop-filter: blur(10px) saturate(.85);
+  -webkit-backdrop-filter: blur(10px) saturate(.85);
+  clip-path: none;
+}
+
+.phi-file-topbar {
+  height: 36px;
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  border-bottom: 1px solid rgba(90,126,138,.4);
+  background: #122631;
+  overflow: hidden;
+}
+
+.phi-file-topbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(255,255,255,.06);
+}
+
+.phi-file-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 11px 0 10px;
+  color: #f3fbfc;
+  background: #1688c1;
+  font: 600 11px var(--phi-mono);
+  letter-spacing: .035em;
+  clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%);
+  min-width: 104px;
+}
+
+
+.phi-analysis-status {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  color: #697b80;
+  font: 9px var(--phi-mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.phi-analysis-status > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phi-analysis-track {
+  width: 110px;
+  height: 3px;
+  flex: 0 1 110px;
+  background: #0b171d;
+  border: 1px solid rgba(78,115,127,.45);
+  overflow: hidden;
+}
+
+.phi-analysis-track b {
+  display: block;
+  height: 100%;
+  background: #39b9e8;
+  box-shadow: 0 0 8px rgba(57,185,232,.5);
+}
+
+.phi-analysis-status strong {
+  color: #8ba4ab;
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.phi-file-header {
+  padding: 29px 26px 0;
+}
+
+.phi-file-header h1 {
+  margin: 0 0 13px;
+  color: #f1f4f4;
+  font-size: clamp(34px, 4.4vw, 57px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+
+.phi-file-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  color: #dce5e7;
+  font: 11px var(--phi-mono);
+}
+
+.phi-file-meta__label {
+  padding: 4px 9px;
+  color: #33434a;
+  background: #f0f4f3;
+  font-weight: 700;
+}
+
+.phi-file-meta__value {
+  min-width: 91px;
+  padding: 4px 10px;
+  color: #d6e0e2;
+}
+
+.phi-file-rule {
+  height: 1px;
+  margin-top: 7px;
+  background: linear-gradient(90deg, #dbe3e4 0 100%, transparent 100%);
+  opacity: .9;
+}
+
+.phi-file-content {
+  padding: 22px 26px 52px;
+  color: #e1e7e8;
+  font-size: 17px;
+  line-height: 1.72;
+}
+
+.phi-file-content::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.phi-file-content > p:first-child { margin-top: 0; }
+.phi-file-content p { margin: 0 0 19px; color: #d8e0e1; }
+
+.phi-file-content h2,
+.phi-file-content h3,
+.phi-file-content h4 {
+  margin: 32px 0 13px;
+  padding: 0 0 7px;
+  color: #f0f5f5;
+  border-bottom: 1px solid rgba(196,211,213,.5);
+  font-family: var(--phi-sans);
+  font-weight: 500;
+}
+
+.phi-file-content h2::before,
+.phi-file-content h3::before,
+.phi-file-content h4::before {
+  content: "//";
+  margin-right: 8px;
+  color: #118bc5;
+  font-family: var(--phi-mono);
+}
+
+.phi-file-content ul,
+.phi-file-content ol { padding-left: 28px; }
+.phi-file-content li { margin: 5px 0; }
+
+.phi-file-content a {
+  color: #58bde7;
+  border-bottom: 1px dotted rgba(88,189,231,.7);
+}
+
+.phi-file-content blockquote {
+  margin: 25px 0;
+  padding: 11px 17px;
+  color: #aebdc0;
+  background: rgba(34,48,52,.55);
+  border-left: 3px solid #138bc1;
+}
+
+.phi-file-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 25px auto;
+  border: 1px solid rgba(183,204,208,.28);
+}
+
+.phi-file-content code {
+  padding: 2px 5px;
+  background: #0d171a;
+  border: 1px solid #26383e;
+  color: #bcecff;
+  font-family: var(--phi-code);
+}
+
+.phi-file-content pre {
+  padding: 16px;
+  overflow-x: auto;
+  background: #091013;
+  border: 1px solid #2a3c41;
+  border-left: 3px solid #118bc5;
+  font-family: var(--phi-code);
+}
+
+.phi-file-content pre code { padding: 0; border: 0; background: transparent; font-family: var(--phi-code); }
+
+.phi-file-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 26px 26px;
+}
+
+.phi-file-nav a {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 13px;
+  border: 1px solid #33474e;
+  background: rgba(11,22,26,.6);
+  color: #8ea2a7;
+  font: 10px var(--phi-mono);
+}
+
+.phi-file-nav a:hover { border-color: #188fc8; color: #fff; }
+.phi-file-nav a span { color: #168dca; }
+.phi-file-nav a strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.phi-file-nav a.is-next { text-align: right; align-items: flex-end; }
+
+@media (max-width: 780px) {
+  .phi-file-view { grid-template-columns: 1fr; gap: 12px; }
+  .phi-folder-panel { transform: none; }
+  .phi-folder-cover { height: 165px; }
+  .phi-folder-list { display: grid; grid-template-columns: 1fr 1fr; }
+  .phi-folder-item { min-height: 40px; }
+  .phi-file-topbar { height: 34px; }
+  .phi-analysis-track { width: 65px; flex-basis: 65px; }
+  .phi-file-header { padding: 24px 19px 0; }
+  .phi-file-content { padding: 20px 19px 38px; font-size: 16px; }
+  .phi-file-nav { padding: 0 19px 19px; }
+}
+
+@media (max-width: 520px) {
+  .phi-analysis-track { display: none; }
+  .phi-analysis-status strong { margin-left: auto; }
+  .phi-file-meta__label { margin-top: 4px; }
+  .phi-file-meta__value { margin-top: 4px; min-width: 80px; }
+  .phi-folder-list { grid-template-columns: 1fr; }
+  .phi-file-nav { grid-template-columns: 1fr; }
+  .phi-file-nav a.is-next { text-align: left; align-items: flex-start; }
+}
+
+/* ============================================================
+   Saturn / PhigrOS visual corrections
+   ============================================================ */
+
+/* The tiny decorative strokes beside FOLDER_INFORMATION,
+   CONTENT and FILE_CONTENT were not part of the reference UI. */
+/* Saturn reference UI has clean section headers without stray decorative strokes. */
+.phi-folder-head::after,
+.phi-folder-section::after,
+.phi-file-tab::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   FILE_CONTENT top bar = the progress bar itself.
+   The blue/striped portion is the completed analysis area;
+   the dark remainder is the unanalysed area.
+   ------------------------------------------------------------ */
+.phi-file-topbar {
+  background: #122631;
+  isolation: isolate;
+}
+
+/* The top bar IS the analysis meter. There is no separate progress track. */
+.phi-file-topbar::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0 auto 0 0;
+  width: var(--analysis-progress);
+  pointer-events: none;
+  background: #1688c1;
+  box-shadow: inset -1px 0 rgba(224,247,255,.75);
+  transition: width .45s ease;
+}
+
+.phi-file-topbar::after {
+  z-index: 0;
+}
+
+.phi-file-tab,
+.phi-analysis-status {
+  position: relative;
+  z-index: 1;
+}
+
+.phi-analysis-status {
+  gap: 14px;
+}
+
+.phi-analysis-status > span {
+  color: rgba(210,230,236,.58);
+}
+
+.phi-analysis-status strong {
+  margin-left: auto;
+  color: rgba(207,229,235,.58);
+}
+
+/* Remove the old standalone mini progress track completely. */
+.phi-analysis-track { display: none !important; }
+
+/* ------------------------------------------------------------
+   Homepage: PhigrOS startup-style fisheye triangular field
+   ------------------------------------------------------------ */
+.phi-home-visuals {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.phi-home-fisheye {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: .86;
+  transform: scale(1.03);
+  transform-origin: center center;
+}
+
+.phi-network-base,
+.phi-network-glow {
+  vector-effect: non-scaling-stroke;
+}
+
+.phi-network-base {
+  stroke-width: 1.15;
+  opacity: .52;
+}
+
+.phi-network-glow {
+  stroke-width: 1.7;
+  opacity: .92;
+}
+
+/* The lines themselves are curved toward the sides by the SVG fisheye
+   mapping. The animated mask only reveals the identical lines; no separate
+   scan-line graphic is placed over the background. */
+
+/* Background image is intentionally subdued; users can replace it with
+   themes/phigros/source/images/phigros-bg.jpg and change the path in config. */
+.phi-bg-image {
+  opacity: .30;
+}
+
+.phi-bg-overlay {
+  background:
+    linear-gradient(180deg, rgba(4,7,9,.84), rgba(4,7,9,.95)),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.009) 4px);
+}
+
+@media (max-width: 780px) {
+  .phi-home-fisheye { opacity: .52; transform: scale(1.08); }
+  .phi-network-base { opacity: .38; }
+  .phi-network-glow { opacity: .70; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phi-network-glow rect > animate {
+    display: none;
+  }
+  .phi-network-glow { opacity: .38; }
+}
+
+
+/* ============================================================
+   v3.6 — closer Saturn Virtual OS top bar / offset UI shadow
+   ============================================================ */
+.phi-file-panel {
+  isolation: isolate;
+  overflow: visible;
+}
+
+/* A faint displaced duplicate layer creates the characteristic Saturn UI
+   depth instead of a heavy conventional drop shadow. */
+.phi-file-panel::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  transform: translate(8px, 9px);
+  border: 1px solid rgba(45, 91, 108, .16);
+  background: rgba(5, 15, 20, .09);
+  box-shadow: 0 10px 22px rgba(0,0,0,.12);
+  pointer-events: none;
+}
+
+.phi-file-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* The reference uses a compact blue FILE_CONTENT tab. */
+.phi-file-tab {
+  min-width: 104px;
+  padding-left: 10px;
+  padding-right: 13px;
+  letter-spacing: .035em;
+}
+
+/* The top strip itself is the analysis meter: the completed area carries
+   the subtle diagonal technical hatching seen in the reference. */
+.phi-file-topbar::before {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(255,255,255,.045) 0 2px,
+      rgba(255,255,255,0) 2px 7px),
+    #1688c1;
+}
+
+/* The status is one compact label, not a second percentage readout. */
+.phi-analysis-status {
+  gap: 0;
+  padding-left: 12px;
+}
+
+.phi-analysis-status strong {
+  display: none;
+}
+
+.phi-analysis-status > span {
+  color: rgba(207,226,232,.52);
+  font-size: 9px;
+  letter-spacing: .045em;
+}
+
+@media (max-width: 780px) {
+  .phi-file-panel::before {
+    transform: translate(4px, 5px);
+  }
+}
+
+/* v3.8: the title network is the only background line system.
+   Remove the legacy square-grid / diagonal-glint overlays so they do not
+   interfere with the sideways equilateral-triangle tessellation. */
+.phi-bg-grid,
+.phi-bg-glints {
+  display: none !important;
+}
+
+.phi-home-fisheye {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.phi-network-base {
+  stroke: rgba(111, 209, 238, .18) !important;
+  stroke-width: 1.15;
+  vector-effect: non-scaling-stroke;
+}
+
+.phi-network-glow {
+  stroke: rgba(170, 236, 249, .88) !important;
+  stroke-width: 1.35;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ============================================================
+   v3.9 — pure sideways-equilateral-triangle title network
+   ============================================================ */
+.phi-home-visuals {
+  z-index: 0;
+}
+
+.phi-home-fisheye {
+  opacity: .82;
+  transform: none;
+}
+
+/* No square/diamond/secondary background geometry: the visible network
+   consists only of the equilateral triangle tessellation. */
+.phi-bg-grid,
+.phi-bg-glints {
+  display: none !important;
+}
+
+.phi-network-base {
+  fill: none !important;
+  stroke: rgba(111, 209, 238, .15) !important;
+  stroke-width: .92 !important;
+  vector-effect: non-scaling-stroke;
+}
+
+.phi-network-glow {
+  fill: none !important;
+  stroke: rgba(178, 239, 250, .90) !important;
+  stroke-width: 1.28 !important;
+  vector-effect: non-scaling-stroke;
+}
+
+@media (max-width: 780px) {
+  .phi-home-fisheye { opacity: .48; }
+  .phi-network-base { stroke-width: .82 !important; }
+  .phi-network-glow { stroke-width: 1.10 !important; }
+}
+
+/* v3.9 final correction: the homepage background is the triangle network only. */
+.phi-bg-grid,
+.phi-bg-glints { display: none !important; }
+
+/* ============================================================
+   v4.0 — Saturn FILE_CONTENT meter refinement
+   ============================================================ */
+.phi-file-topbar {
+  /* The reference bar is a compact, flat blue-gray strip. */
+  height: 28px;
+  background: #1c3140;
+  border-bottom: 1px solid rgba(130, 158, 168, .18);
+  overflow: visible;
+}
+
+/* The completed portion is a flat #315472 field with hatching only
+   inside the completed area. At 0% this layer has zero width, so there
+   is no hatch at all. */
+.phi-file-topbar::before {
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255,255,255,.07) 0 2px,
+      rgba(255,255,255,0) 2px 7px
+    ),
+    #315472;
+  box-shadow: inset -1px 0 rgba(226, 241, 246, .72);
+  transition: width .45s ease;
+}
+
+/* Keep the original FILE_CONTENT arrow tag color and height. */
+.phi-file-tab {
+  height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  align-self: flex-start;
+  background: #1688c1;
+  color: #f3fbfc;
+}
+
+.phi-analysis-status {
+  height: 28px;
+  min-height: 28px;
+  box-sizing: border-box;
+  align-self: flex-start;
+}
+
+@media (max-width: 780px) {
+  .phi-file-topbar {
+    height: 26px;
+  }
+  .phi-file-tab {
+    height: 34px;
+    min-height: 34px;
+  }
+  .phi-analysis-status {
+    height: 26px;
+    min-height: 26px;
+  }
+}
+
+/* ============================================================
+   v5.0 — PHATASiA LOTUS LAND homepage / startup shell
+   ============================================================ */
+
+/* Homepage uses the existing triangular network only inside its own stage.
+   The network itself is intentionally not redefined here. */
+.phi-main--home {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+.phi-index--home {
+  position: relative;
+}
+
+.phi-home-stage {
+  min-height: calc(100vh - 73px);
+  height: calc(100vh - 73px);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.phi-home-visuals {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.phi-home-fisheye {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Keep the already-tuned network geometry and animation exactly as-is. */
+.phi-home-stage .phi-home-fisheye {
+  opacity: .78;
+}
+
+.phi-startup-copy {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  transform: translateY(-2vh);
+  padding: 24px;
+  user-select: none;
+}
+
+.phi-startup-copy h1 {
+  margin: 0;
+  color: #dffbff;
+  font-family: var(--phi-mono);
+  font-size: clamp(43px, 7vw, 92px);
+  font-weight: 500;
+  line-height: .95;
+  letter-spacing: .075em;
+  text-transform: none;
+  text-shadow:
+    0 0 4px rgba(217,250,255,.85),
+    0 0 16px rgba(57,185,232,.82),
+    0 0 38px rgba(57,185,232,.38);
+}
+
+.phi-startup-copy p {
+  margin: 34px 0 0;
+  color: rgba(235,249,252,.94);
+  font-family: var(--phi-mono);
+  font-size: clamp(13px, 1.45vw, 19px);
+  letter-spacing: .46em;
+  line-height: 1.2;
+  text-indent: .46em;
+  text-shadow: 0 0 12px rgba(221,248,255,.34);
+}
+
+.phi-home-scroll-cue {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 11px;
+  width: 56px;
+  height: 34px;
+  transform: translateX(-50%);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--phi-cyan);
+  cursor: pointer;
+  opacity: .84;
+  transition: opacity .2s, transform .2s;
+}
+
+.phi-home-scroll-cue:hover {
+  opacity: 1;
+  transform: translateX(-50%) translateY(2px);
+}
+
+.phi-home-scroll-cue__chevrons {
+  width: 26px;
+  height: 24px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  filter: drop-shadow(0 0 7px rgba(57,185,232,.42));
+}
+
+.phi-home-scroll-cue__chevrons i {
+  width: 13px;
+  height: 13px;
+  display: block;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  margin-top: -5px;
+}
+
+.phi-home-scroll-cue__chevrons i:first-child { opacity: .62; }
+.phi-home-scroll-cue__chevrons i:last-child { opacity: 1; }
+
+/* Once the startup viewport ends, switch to the quieter system UI. */
+.phi-home-content {
+  position: relative;
+  z-index: 4;
+  width: min(1120px, calc(100% - 34px));
+  margin: 0 auto;
+  padding: 68px 0 110px;
+}
+
+.phi-home-section + .phi-home-section {
+  margin-top: 105px;
+}
+
+.phi-home-section__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.phi-home-section__heading > span {
+  color: rgba(57,185,232,.76);
+  font: 600 11px var(--phi-mono);
+  letter-spacing: .16em;
+  padding-top: 4px;
+}
+
+.phi-home-section__eyebrow {
+  margin: 0 0 2px;
+  color: rgba(57,185,232,.64);
+  font: 600 9px var(--phi-mono);
+  letter-spacing: .16em;
+}
+
+.phi-home-section__heading h2 {
+  margin: 0;
+  color: #e5eeee;
+  font: 500 clamp(23px, 3vw, 35px)/1.05 var(--phi-mono);
+  letter-spacing: .10em;
+}
+
+/* ---------- featured slideshow ---------- */
+
+.phi-feature-slider {
+  position: relative;
+  padding: 0 42px;
+}
+
+.phi-feature-viewport {
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+  background: rgba(7,13,16,.62);
+  border: 1px solid rgba(135,164,174,.18);
+}
+
+.phi-feature-viewport::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  border: 1px solid rgba(57,185,232,.08);
+  clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+  mix-blend-mode: screen;
+  animation: phi-glitch-border 5.5s steps(1,end) infinite;
+}
+
+@keyframes phi-glitch-border {
+  0%, 79%, 100% { opacity: .50; transform: translate(0,0); }
+  80% { opacity: .25; transform: translate(2px,-1px); }
+  81% { opacity: .70; transform: translate(-1px,1px); }
+  82% { opacity: .38; transform: translate(1px,0); }
+}
+
+.phi-feature-track {
+  display: flex;
+  transition: transform .55s cubic-bezier(.2,.75,.25,1);
+}
+
+.phi-feature-slide {
+  min-width: 100%;
+  aspect-ratio: 16 / 6.7;
+  position: relative;
+  overflow: hidden;
+  background: #0c1316;
+}
+
+.phi-feature-slide__media,
+.phi-feature-slide__shade {
+  position: absolute;
+  inset: 0;
+}
+
+.phi-feature-slide__media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: saturate(.86) brightness(.66) contrast(1.04);
+}
+
+.phi-feature-slide__shade {
+  background:
+    linear-gradient(90deg, rgba(4,10,13,.82), rgba(4,10,13,.15) 54%, rgba(4,10,13,.45)),
+    linear-gradient(0deg, rgba(3,8,10,.42), transparent 45%);
+}
+
+.phi-feature-slide__copy {
+  position: absolute;
+  left: 8%;
+  bottom: 13%;
+  z-index: 2;
+}
+
+.phi-feature-slide__copy h3 {
+  margin: 0;
+  color: #f3f8f9;
+  font: 700 clamp(30px, 5vw, 54px)/1 var(--phi-mono);
+  letter-spacing: .05em;
+  text-shadow: 0 2px 15px rgba(0,0,0,.45);
+}
+
+.phi-feature-slide__copy p {
+  margin: 13px 0 0;
+  color: rgba(213,224,226,.76);
+  font: 400 clamp(12px, 1.4vw, 17px)/1.2 var(--phi-mono);
+  letter-spacing: .12em;
+}
+
+.phi-feature-control {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 32px;
+  height: 66px;
+  margin-top: -33px;
+  border: 1px solid rgba(57,185,232,.34);
+  background: rgba(7,14,17,.50);
+  color: #dceff3;
+  font: 300 30px/1 var(--phi-mono);
+  cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s;
+}
+
+.phi-feature-control:hover {
+  background: rgba(28,49,64,.82);
+  border-color: rgba(57,185,232,.72);
+  color: #fff;
+}
+
+.phi-feature-control--prev { left: 0; }
+.phi-feature-control--next { right: 0; }
+
+.phi-feature-dots {
+  position: absolute;
+  left: 50%;
+  bottom: -31px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+}
+
+.phi-feature-dots button {
+  width: 26px;
+  height: 3px;
+  padding: 0;
+  border: 1px solid rgba(57,185,232,.35);
+  background: rgba(57,185,232,.11);
+  cursor: pointer;
+}
+
+.phi-feature-dots button.is-active {
+  background: rgba(57,185,232,.78);
+}
+
+/* ---------- timeline ---------- */
+
+.phi-timeline {
+  border-top: 1px solid rgba(196,213,215,.13);
+}
+
+.phi-timeline-item {
+  min-height: 96px;
+  display: grid;
+  grid-template-columns: 54px 116px minmax(0,1fr) 24px;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  border-bottom: 1px solid rgba(196,213,215,.10);
+  color: #ccd6d8;
+  transition: background .18s, padding-left .18s;
+}
+
+.phi-timeline-item:hover {
+  padding-left: 8px;
+  background: rgba(57,185,232,.045);
+}
+
+.phi-timeline-item__marker {
+  position: relative;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font: 10px var(--phi-mono);
+  color: rgba(57,185,232,.82);
+}
+
+.phi-timeline-item__marker::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(57,185,232,.18);
+}
+
+.phi-timeline-item__marker span {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: var(--phi-bg);
+  border: 1px solid rgba(57,185,232,.40);
+}
+
+.phi-timeline-item__date {
+  color: #6d7a7d;
+  font: 10px var(--phi-mono);
+  letter-spacing: .08em;
+}
+
+.phi-timeline-item__body h3 {
+  margin: 0;
+  font: 600 17px/1.25 var(--phi-mono);
+  color: #ebf0f0;
+}
+
+.phi-timeline-item__body p {
+  margin: 5px 0 0;
+  max-width: 720px;
+  color: #7f8d90;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.phi-timeline-item__arrow {
+  color: rgba(57,185,232,.72);
+  font: 300 24px/1 var(--phi-mono);
+  text-align: center;
+}
+
+/* ---------- miscellaneous ---------- */
+
+.phi-misc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.15fr;
+  gap: 1px;
+  background: rgba(196,213,215,.10);
+  border: 1px solid rgba(196,213,215,.10);
+}
+
+.phi-misc-block {
+  min-height: 160px;
+  padding: 25px 24px;
+  background: rgba(7,13,16,.76);
+}
+
+.phi-misc-block__label {
+  display: block;
+  margin-bottom: 18px;
+  color: rgba(57,185,232,.62);
+  font: 600 9px var(--phi-mono);
+  letter-spacing: .15em;
+}
+
+.phi-misc-block h3 {
+  margin: 0 0 10px;
+  color: #ecf3f4;
+  font: 600 19px/1.2 var(--phi-mono);
+}
+
+.phi-misc-block p,
+.phi-misc-block > a {
+  color: #829093;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.phi-misc-block > a:hover { color: var(--phi-cyan); }
+
+.phi-misc-links {
+  display: grid;
+  gap: 7px;
+}
+
+.phi-misc-links a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #a8b4b6;
+  font-size: 12px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(196,213,215,.08);
+}
+
+.phi-misc-links a:hover { color: var(--phi-cyan); }
+.phi-misc-links span { color: rgba(57,185,232,.72); }
+
+/* ---------- homepage background fade ---------- */
+
+.is-home-page .phi-bg-image {
+  opacity: calc(.30 * (1 - var(--home-bg-fade, 0)));
+  transform: scale(1.06) translateY(calc(var(--home-bg-shift, 0) * -1));
+  transition: opacity .12s linear, transform .15s linear;
+}
+
+.is-home-page .phi-bg-overlay {
+  background:
+    linear-gradient(180deg, rgba(5,8,10,.79), rgba(5,8,10,.96)),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.010) 4px);
+}
+
+.is-home-page {
+  --home-bg-fade: 0;
+  --home-bg-shift: 0px;
+}
+
+@media (max-width: 820px) {
+  .phi-home-stage { min-height: calc(100svh - 62px); height: calc(100svh - 62px); }
+  .phi-startup-copy h1 { font-size: clamp(34px, 10vw, 58px); letter-spacing: .05em; }
+  .phi-startup-copy p { margin-top: 24px; letter-spacing: .28em; text-indent: .28em; }
+  .phi-home-content { width: min(100% - 24px, 700px); padding-top: 56px; }
+  .phi-feature-slider { padding: 0 30px; }
+  .phi-feature-slide { aspect-ratio: 16 / 8.8; }
+  .phi-feature-slide__copy { left: 9%; bottom: 15%; }
+  .phi-feature-control { width: 26px; height: 54px; margin-top: -27px; }
+  .phi-timeline-item { grid-template-columns: 42px 84px minmax(0,1fr) 18px; gap: 8px; }
+  .phi-timeline-item__body p { display: none; }
+  .phi-misc-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .phi-startup-copy { transform: translateY(-3vh); }
+  .phi-startup-copy h1 { font-size: clamp(31px, 11vw, 48px); line-height: 1.02; }
+  .phi-startup-copy p { font-size: 11px; margin-top: 23px; letter-spacing: .20em; text-indent: .20em; }
+  .phi-home-scroll-cue { bottom: 8px; }
+  .phi-home-section + .phi-home-section { margin-top: 76px; }
+  .phi-home-section__heading { gap: 11px; }
+  .phi-home-section__heading h2 { font-size: 25px; }
+  .phi-feature-slider { padding: 0 22px; }
+  .phi-feature-slide { aspect-ratio: 4 / 3; }
+  .phi-feature-slide__copy h3 { font-size: 30px; }
+  .phi-feature-slide__copy p { font-size: 11px; letter-spacing: .08em; }
+  .phi-feature-control { width: 22px; }
+  .phi-timeline-item { grid-template-columns: 36px 1fr 14px; }
+  .phi-timeline-item__date { grid-column: 2; grid-row: 1; align-self: end; margin-bottom: 7px; }
+  .phi-timeline-item__body { grid-column: 2; grid-row: 2; padding-bottom: 13px; }
+  .phi-timeline-item__arrow { grid-column: 3; grid-row: 1 / 3; }
+  .phi-timeline-item__marker { grid-row: 1 / 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phi-feature-viewport::after { animation: none; }
+  .phi-feature-track { transition: none; }
+  .phi-home-scroll-cue__chevrons { filter: none; }
+}
+
+
+/* ============================================================
+   v5.1 — Homepage virtual-screen transition
+   The homepage stays exactly one viewport tall. Wheel/touch changes
+   screens; the document itself does not scroll.
+   ============================================================ */
+html:has(body.is-home-page),
+html:has(body.is-home-page) body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body.is-home-page .phi-header {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+body.is-home-page .phi-main--home {
+  width: 100%;
+  max-width: none;
+  height: 100svh;
+  min-height: 100svh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 820px) {
+  body.is-home-page .phi-main--home {
+    height: 100svh;
+    min-height: 100svh;
+    margin-top: 0;
+  }
+}
+
+body.is-home-page .phi-footer {
+  display: none;
+}
+
+body.is-home-page .phi-index--home {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+body.is-home-page .phi-home-stage,
+body.is-home-page .phi-home-content,
+body.is-home-page .phi-home-section {
+  box-sizing: border-box;
+}
+
+body.is-home-page .phi-home-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  z-index: 2;
+  transform: translate3d(0,0,0);
+  transition: transform .82s cubic-bezier(.2,.78,.22,1), opacity .56s ease;
+}
+
+body.is-home-page .phi-home-content {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body.is-home-page .phi-home-section {
+  position: absolute;
+  inset: 0;
+  width: min(1120px, calc(100% - 52px));
+  height: min(78vh, 760px);
+  margin: auto !important;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  transform: translate3d(0, 108%, 0) scale(.975);
+  transform-origin: center center;
+  transition: transform .82s cubic-bezier(.2,.78,.22,1), opacity .48s ease;
+  pointer-events: none;
+}
+
+body.is-home-page .phi-home-section.is-home-panel-active {
+  opacity: 1;
+  transform: translate3d(0,0,0) scale(1);
+  pointer-events: auto;
+}
+
+body.is-home-page .phi-home-stage:not(.is-home-panel-active) {
+  pointer-events: none;
+}
+
+body.is-home-step-1 .phi-home-stage,
+body.is-home-step-2 .phi-home-stage,
+body.is-home-step-3 .phi-home-stage {
+  transform: translate3d(0,-34%,0) scale(.985);
+  opacity: .04;
+  pointer-events: none;
+}
+
+body.is-home-page .phi-home-visuals {
+  transition: opacity .65s ease, transform .82s cubic-bezier(.2,.78,.22,1);
+}
+
+body.is-home-step-1 .phi-home-visuals,
+body.is-home-step-2 .phi-home-visuals,
+body.is-home-step-3 .phi-home-visuals {
+  opacity: 0;
+  transform: scale(1.035) translateY(-2.5%);
+}
+
+body.is-home-step-1 .phi-startup-copy,
+body.is-home-step-2 .phi-startup-copy,
+body.is-home-step-3 .phi-startup-copy {
+  opacity: 0;
+  transform: translateY(-22vh) scale(.96);
+  transition: transform .82s cubic-bezier(.2,.78,.22,1), opacity .38s ease;
+}
+
+body.is-home-page .phi-startup-copy {
+  transition: transform .82s cubic-bezier(.2,.78,.22,1), opacity .42s ease;
+}
+
+body.is-home-step-1 .phi-home-scroll-cue,
+body.is-home-step-2 .phi-home-scroll-cue,
+body.is-home-step-3 .phi-home-scroll-cue {
+  opacity: 0;
+  transform: translateX(-50%) translateY(34px);
+  pointer-events: none;
+}
+
+body.is-home-page .phi-home-scroll-cue {
+  transition: opacity .35s ease, transform .55s cubic-bezier(.2,.78,.22,1);
+}
+
+body.is-home-page.is-home-step-1 .phi-home-section--features,
+body.is-home-page.is-home-step-2 .phi-home-section--timeline,
+body.is-home-page.is-home-step-3 .phi-home-section--misc {
+  opacity: 1;
+  transform: translate3d(0,0,0) scale(1);
+}
+
+body.is-home-step-2 .phi-home-section--features,
+body.is-home-step-3 .phi-home-section--features,
+body.is-home-step-3 .phi-home-section--timeline {
+  opacity: 0;
+  transform: translate3d(0,-108%,0) scale(.975);
+}
+
+body.is-home-step-2 .phi-home-section--timeline,
+body.is-home-step-3 .phi-home-section--misc {
+  opacity: 1;
+  transform: translate3d(0,0,0) scale(1);
+}
+
+body.is-home-step-1 .phi-home-section--timeline,
+body.is-home-step-1 .phi-home-section--misc,
+body.is-home-step-2 .phi-home-section--misc {
+  transform: translate3d(0,108%,0) scale(.975);
+}
+
+body.is-home-jump * {
+  transition-duration: .01ms !important;
+}
+
+@media (max-width: 820px) {
+  body.is-home-page .phi-home-section {
+    width: min(100% - 28px, 720px);
+    height: min(76vh, 720px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.is-home-page .phi-home-stage,
+  body.is-home-page .phi-home-section,
+  body.is-home-page .phi-startup-copy,
+  body.is-home-page .phi-home-visuals,
+  body.is-home-page .phi-home-scroll-cue {
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ============================================================
+   v5.2 — Saturn shell refinements
+   ============================================================ */
+
+/* On the homepage the shell stays hidden during the startup screen.
+   It drops in only when the user enters panel 01. */
+body.is-home-page .phi-header {
+  transform: translate3d(0,-110%,0);
+  opacity: 0;
+  transition: transform .72s cubic-bezier(.2,.78,.22,1), opacity .32s ease;
+}
+
+body.is-home-page.is-home-step-1 .phi-header,
+body.is-home-page.is-home-step-2 .phi-header,
+body.is-home-page.is-home-step-3 .phi-header {
+  transform: translate3d(0,0,0);
+  opacity: 1;
+}
+
+/* No mascot/icon before the site name: keep the brand plate clean. */
+body.is-home-page .phi-brand {
+  gap: 0;
+}
+
+.phi-brand__mark { display: none; }
+
+/* The slideshow frame is clipped as a parallelogram, but its border
+   must follow the same four slanted edges instead of the rectangular box. */
+.phi-feature-viewport {
+  border: 0;
+  box-shadow: none;
+  background: rgba(7,13,16,.62);
+}
+
+.phi-feature-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.phi-feature-frame polygon {
+  stroke: rgba(135,164,174,.24);
+  stroke-width: 1.1;
+}
+
+.phi-feature-viewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+  border: 0;
+  background: none;
+  box-shadow: none;
+  z-index: 7;
+  mix-blend-mode: screen;
+  animation: phi-glitch-border 5.5s steps(1,end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.is-home-page .phi-header {
+    transition-duration: .01ms !important;
+  }
+}
+
+
+/* ============================================================
+   v5.3 — MISC / background fixes
+   ============================================================ */
+
+/* Keep the miscellaneous author/friends area open and borderless. */
+body.is-home-page .phi-misc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  background: transparent;
+  border: 0;
+}
+
+body.is-home-page .phi-misc-block {
+  min-height: 0;
+  padding: 24px 30px 20px;
+  background: transparent;
+  border: 0;
+}
+
+body.is-home-page .phi-misc-block + .phi-misc-block {
+  padding-left: 36px;
+}
+
+.phi-misc-contact {
+  display: inline-block;
+  color: #aeb9bc;
+  font: 400 12px/1.7 var(--phi-mono);
+  letter-spacing: .03em;
+}
+
+.phi-misc-contact:hover { color: var(--phi-cyan); }
+
+.phi-socials {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.phi-social-link {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  color: rgba(214,228,232,.78);
+  background: rgba(255,255,255,.018);
+  border: 1px solid rgba(185,211,218,.12);
+  transition: color .18s ease, border-color .18s ease, background .18s ease, transform .18s ease;
+}
+
+.phi-social-link:hover {
+  color: var(--phi-cyan);
+  border-color: rgba(57,185,232,.42);
+  background: rgba(57,185,232,.055);
+  transform: translateY(-1px);
+}
+
+.phi-social-link.is-disabled {
+  opacity: .32;
+  cursor: default;
+}
+
+.phi-social-link.is-disabled:hover {
+  color: rgba(214,228,232,.78);
+  border-color: rgba(185,211,218,.12);
+  background: rgba(255,255,255,.018);
+  transform: none;
+}
+
+.phi-social-link[aria-label="X"] svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+.phi-social-link svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.phi-misc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 18px;
+  margin-top: 2px;
+}
+
+.phi-misc-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  color: #9eabad;
+  font: 400 12px/1.7 var(--phi-mono);
+}
+
+.phi-misc-links a:hover { color: var(--phi-cyan); }
+.phi-misc-links span:last-child { color: rgba(57,185,232,.58); }
+
+.phi-misc-copyright {
+  margin-top: 20px;
+  padding: 16px 20px 4px;
+  text-align: center;
+  color: rgba(151,164,168,.56);
+  font: 400 10px/1.55 var(--phi-mono);
+  letter-spacing: .08em;
+}
+
+.phi-misc-copyright > div {
+  color: rgba(170,183,186,.58);
+  letter-spacing: .18em;
+}
+
+.phi-misc-copyright p { margin: 2px 0 0; }
+
+/* Background: the bundled theme image is bg.jpg, so it is always resolvable
+   out of the box. Users can still override background.image in _config.yml. */
+.phi-bg-image {
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 820px) {
+  body.is-home-page .phi-misc-grid { grid-template-columns: 1fr; }
+  body.is-home-page .phi-misc-block,
+  body.is-home-page .phi-misc-block + .phi-misc-block { padding: 18px 14px 12px; }
+  .phi-misc-copyright { margin-top: 12px; padding-left: 10px; padding-right: 10px; }
+}
+
+/* v5.4 — homepage ambient background sits behind the virtual screens. */
+body.is-home-page .phi-bg-layer {
+  z-index: 0;
+  overflow: hidden;
+}
+
+body.is-home-page .phi-bg-image {
+  opacity: calc(.18 * (1 - var(--home-bg-fade, 0)));
+  transform: scale(1.035) translateY(calc(var(--home-bg-shift, 0) * -1));
+  transition: opacity .72s ease, transform .82s cubic-bezier(.2,.78,.22,1);
+}
+
+body.is-home-page .phi-bg-overlay {
+  background-color: rgba(3,7,9,.76);
+  background-image: repeating-linear-gradient(0deg, transparent 0 4px, rgba(210,240,245,.008) 5px);
+}
+
+body.is-home-page .phi-home-stage {
+  z-index: 2;
+}
+
+/* v5.4 — the final-screen copyright hugs the bottom edge. */
+body.is-home-page .phi-home-section--misc .phi-misc-copyright {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  margin: 0;
+  padding: 0 12px;
+  text-align: center;
+}
+
+/* v5.5 — darker homepage atmosphere + subtle point field */
+body.is-home-page {
+  background: #050709;
+}
+
+body.is-home-page .phi-bg-image {
+  opacity: calc(.075 * (1 - var(--home-bg-fade, 0)));
+  transform: scale(1.035) translateY(calc(var(--home-bg-shift, 0) * -1));
+  transition: opacity .72s ease, transform .82s cubic-bezier(.2,.78,.22,1);
+}
+
+body.is-home-page .phi-bg-overlay {
+  background-color: rgba(2,5,7,.915);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0 5px,
+    rgba(190,225,235,.006) 6px
+  );
+}
+
+body.is-home-page .phi-bg-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: calc(.22 * (1 - var(--home-bg-fade, 0)));
+  background-image: radial-gradient(circle, rgba(112,180,201,.34) 0 .7px, transparent .8px);
+  background-size: 92px 92px;
+  background-position: 14px 18px;
+  transition: opacity .72s ease;
+}
+
+
+/* ============================================================
+   v5.8 — black background + post dot field
+   - Home: pure black. Dot field begins only from virtual screen 2.
+   - Post: pure black with a very subtle dot field.
+   - Disable the old ambient image/blue overlay on both.
+   ============================================================ */
+
+html:has(body.is-home-page),
+html:has(body.is-post-page) {
+  background: #000 !important;
+}
+
+body.is-home-page,
+body.is-post-page {
+  background: #000 !important;
+}
+
+body.is-home-page .phi-bg-image,
+body.is-post-page .phi-bg-image {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+
+body.is-home-page .phi-bg-overlay,
+body.is-post-page .phi-bg-overlay {
+  background: #000 !important;
+  background-image: none !important;
+}
+
+/* Homepage: absolutely no dots on the startup screen. */
+body.is-home-step-0 .phi-bg-layer::after,
+body.is-home-page:not(.is-home-step-1):not(.is-home-step-2):not(.is-home-step-3) .phi-bg-layer::after {
+  opacity: 0 !important;
+}
+
+/* From screen 2 onward, a sparse and very low-contrast dot field appears. */
+body.is-home-step-1 .phi-bg-layer::after,
+body.is-home-step-2 .phi-bg-layer::after,
+body.is-home-step-3 .phi-bg-layer::after {
+  opacity: .14 !important;
+}
+
+/* Posts use the same dots continuously, but kept weaker than the geometry. */
+body.is-post-page .phi-bg-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: .13;
+  background-image: radial-gradient(circle, rgba(112,180,201,.30) 0 .65px, transparent .76px);
+  background-size: 94px 94px;
+  background-position: 16px 22px;
+}
+
+
+/* ============================================================
+   v5.9 — cyan network glow / clearer glass article panel / X logo
+   ============================================================ */
+.phi-file-panel {
+  background: rgba(10,16,18,.40) !important;
+  backdrop-filter: blur(13px) saturate(.78);
+  -webkit-backdrop-filter: blur(13px) saturate(.78);
+}
+
+.phi-file-content {
+  background: rgba(0,0,0,.035);
+}
+
+.phi-network-base {
+  opacity: .62 !important;
+  stroke: rgba(111, 209, 238, .22) !important;
+}
+
+.phi-network-glow {
+  opacity: 1 !important;
+  stroke: rgba(196, 244, 255, .98) !important;
+  stroke-width: 1.48 !important;
+  filter: url(#phi-line-glow);
+}
+
+/* ============================================================
+   v6.0 — stronger geometry glow / pure black / Saturn categories
+   ============================================================ */
+
+html,
+body,
+.phi-main,
+.phi-index,
+.phi-index--home,
+.phi-taxonomy,
+.phi-archive,
+.phi-post,
+.phi-collection-page {
+  background-color: #000000 !important;
+}
+
+/* Disable the legacy ambient image/overlay entirely. Homepage geometry and
+   the post dot field are rendered by their own layers. */
+.phi-bg-image,
+.phi-bg-overlay,
+.phi-bg-grid,
+.phi-bg-glints {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: #000 !important;
+  background-image: none !important;
+}
+
+body,
+body.is-home-page,
+body.is-post-page {
+  background: #000000 !important;
+  background-image: none !important;
+}
+
+/* Stronger moving light on the existing triangle network. */
+.phi-network-base {
+  opacity: .46 !important;
+  stroke: rgba(102, 201, 233, .24) !important;
+  stroke-width: 1.0 !important;
+}
+
+.phi-network-halo {
+  display: block !important;
+  opacity: .86 !important;
+  stroke: rgba(72, 219, 248, .66) !important;
+  stroke-width: 2.35 !important;
+  vector-effect: non-scaling-stroke;
+  filter: url(#phi-line-halo);
+}
+
+.phi-network-glow {
+  opacity: .88 !important;
+  stroke: rgba(210, 248, 255, .90) !important;
+  stroke-width: 1.65 !important;
+  vector-effect: non-scaling-stroke;
+  filter: url(#phi-line-glow);
+}
+
+/* Home: no dots on startup; dots appear only from screen 2 onward. */
+body.is-home-step-0 .phi-bg-layer::after,
+body.is-home-page:not(.is-home-step-1):not(.is-home-step-2):not(.is-home-step-3) .phi-bg-layer::after {
+  opacity: 0 !important;
+}
+body.is-home-step-1 .phi-bg-layer::after,
+body.is-home-step-2 .phi-bg-layer::after,
+body.is-home-step-3 .phi-bg-layer::after {
+  opacity: .14 !important;
+}
+
+body.is-home-step-1 .phi-bg-layer::after,
+body.is-home-step-2 .phi-bg-layer::after,
+body.is-home-step-3 .phi-bg-layer::after,
+body.is-post-page .phi-bg-layer::after {
+  background-image: radial-gradient(circle, rgba(152, 205, 220, .23) 0 .65px, transparent .78px) !important;
+  background-size: 94px 94px !important;
+  background-position: 15px 19px !important;
+  background-color: transparent !important;
+}
+
+body.is-post-page .phi-bg-layer {
+  z-index: 0 !important;
+  background: #000 !important;
+}
+body.is-post-page .phi-bg-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .13;
+}
+body.is-post-page .phi-main { position: relative; z-index: 2; }
+
+/* Per-post Folder INFORMATION: category is the default, folder.* is custom. */
+.phi-folder-panel { background: transparent !important; }
+
+/* Saturn collection/category pages. */
+.phi-collection-page {
+  min-height: calc(100vh - 73px);
+  padding: 30px 0 56px;
+}
+.phi-collection-shell {
+  width: min(1130px, calc(100% - 48px));
+  margin: 0 auto;
+  position: relative;
+  background: rgba(7, 10, 12, .92);
+  border: 1px solid rgba(105, 130, 137, .25);
+  box-shadow: 10px 12px 0 rgba(18, 39, 49, .20), 0 24px 55px rgba(0,0,0,.36);
+}
+.phi-collection-topbar {
+  height: 30px;
+  display: flex;
+  align-items: stretch;
+  background: #1c3140;
+  border-bottom: 1px solid rgba(137,164,172,.20);
+  overflow: hidden;
+}
+.phi-collection-tab {
+  min-width: 122px;
+  display: flex;
+  align-items: center;
+  padding: 0 17px;
+  background: #1688c1;
+  color: #f4fbfd;
+  font: 500 14px/1 var(--phi-mono);
+  clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 50%, calc(100% - 13px) 100%, 0 100%);
+}
+.phi-collection-status {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  color: rgba(203,220,224,.44);
+  font: 8px/1 var(--phi-mono);
+  letter-spacing: .08em;
+}
+.phi-collection-close {
+  margin-left: auto;
+  width: 42px;
+  display: grid;
+  place-items: center;
+  color: rgba(233,239,240,.55);
+  background: rgba(155, 75, 59, .42);
+  font: 400 21px/1 var(--phi-mono);
+}
+.phi-collection-body { padding: 34px; }
+.phi-collection-heading { margin-bottom: 23px; }
+.phi-collection-heading__label {
+  display: block;
+  width: max-content;
+  padding: 5px 12px;
+  color: #304046;
+  background: #e9eeee;
+  font: 700 13px/1 var(--phi-mono);
+}
+.phi-collection-heading h1 {
+  margin: 10px 0 2px;
+  color: #edf2f2;
+  font: 400 clamp(34px, 5vw, 58px)/1 var(--phi-mono);
+  letter-spacing: -.03em;
+}
+.phi-collection-heading p {
+  margin: 0;
+  color: #66777b;
+  font: 10px var(--phi-mono);
+  letter-spacing: .08em;
+}
+.phi-collection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.phi-collection-card__media {
+  position: relative;
+  aspect-ratio: 1.78 / 1;
+  overflow: hidden;
+  background: #0b1012;
+  border: 1px solid rgba(184,203,206,.20);
+}
+.phi-collection-card__media::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: #e9eeee;
+  opacity: .84;
+}
+.phi-collection-card__media.is-empty {
+  background-color: #0b1012;
+}
+.phi-collection-card__media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(.82) contrast(1.08);
+}
+.phi-collection-card__shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 42%, rgba(0,0,0,.78) 100%);
+}
+.phi-collection-card__text {
+  position: absolute; left: 12px; right: 12px; bottom: 9px;
+  display: flex; flex-direction: column; color: #edf3f4;
+}
+.phi-collection-card__text span,
+.phi-collection-card__text small {
+  color: rgba(230,238,239,.72);
+  font: 8px var(--phi-mono);
+}
+.phi-collection-card__text strong { font: 500 22px/1.05 var(--phi-mono); }
+.phi-collection-card__text small { margin-top: 3px; }
+
+/* Category folders with no posts: visible but intentionally non-clickable and greyed out. */
+.phi-collection-card.is-disabled {
+  cursor: default;
+  pointer-events: none;
+}
+.phi-collection-card.is-disabled .phi-collection-card__media {
+  filter: grayscale(1);
+  border-color: rgba(184,203,206,.12);
+  background: #111416;
+}
+.phi-collection-card.is-disabled .phi-collection-card__media img {
+  opacity: .18;
+  filter: grayscale(1) contrast(.8);
+}
+.phi-collection-card__disabled-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,12,13,.68);
+}
+.phi-collection-card.is-disabled .phi-collection-card__text {
+  color: rgba(186,195,197,.48);
+}
+.phi-collection-card.is-disabled .phi-collection-card__text strong,
+.phi-collection-card.is-disabled .phi-collection-card__text small {
+  color: rgba(186,195,197,.48);
+}
+.phi-collection-filelist { border-top: 1px solid rgba(192,211,213,.16); }
+.phi-collection-file {
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 42px 110px minmax(0,1fr) 24px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(192,211,213,.10);
+  color: #ccd7d9;
+  transition: background .18s, padding-left .18s;
+}
+.phi-collection-file:hover { padding-left: 7px; background: rgba(57,185,232,.055); }
+.phi-collection-file__index {
+  width: 24px; height: 24px; display: grid; place-items: center; justify-self: center;
+  border: 1px solid rgba(57,185,232,.36); color: rgba(57,185,232,.85); font: 9px var(--phi-mono);
+}
+.phi-collection-file__date { color: #627074; font: 9px var(--phi-mono); }
+.phi-collection-file__title { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 500 14px var(--phi-mono); }
+.phi-collection-file__arrow { color: rgba(57,185,232,.78); font: 300 23px/1 var(--phi-mono); }
+
+@media (max-width: 820px) {
+  .phi-collection-shell { width: min(100% - 24px, 720px); }
+  .phi-collection-body { padding: 24px 18px 28px; }
+  .phi-collection-grid { grid-template-columns: 1fr 1fr; }
+  .phi-collection-file { grid-template-columns: 34px 88px minmax(0,1fr) 18px; gap: 8px; }
+}
+@media (max-width: 520px) {
+  .phi-collection-page { padding-top: 18px; }
+  .phi-collection-grid { grid-template-columns: 1fr; }
+  .phi-collection-file { grid-template-columns: 32px minmax(0,1fr) 16px; }
+  .phi-collection-file__date { grid-column: 2; grid-row: 1; align-self: end; margin-bottom: 4px; }
+  .phi-collection-file__title { grid-column: 2; grid-row: 2; padding-bottom: 10px; }
+  .phi-collection-file__arrow { grid-column: 3; grid-row: 1 / 3; }
+}
+
+/* Pageview counter */
+.phi-file-stats {
+  margin: 18px 18px 0 auto;
+  padding-right: 8px;
+  text-align: right;
+  color: rgba(150, 160, 166, .52);
+  font: 9px/1.2 "Saira", sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.phi-file-stats .waline-pageview-count {
+  color: rgba(170, 181, 186, .62);
+}
+
+/* ==========================================================
+   Waline / Saturn FILE_COMMENT
+   ========================================================== */
+.phi-comments {
+  margin: 82px 0 0;
+  position: relative;
+}
+.phi-comments::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8px -7px -8px 7px;
+  background: rgba(25,48,61,.22);
+  pointer-events: none;
+}
+.phi-comments__topbar {
+  position: relative;
+  height: 32px;
+  display: flex;
+  align-items: stretch;
+  background: #1c3140;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,.04);
+  border-bottom: 1px solid rgba(0,0,0,.45);
+}
+.phi-comments__tab {
+  min-width: 136px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  background: #1688c1;
+  color: #fff;
+  font-family: "Saira", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%);
+}
+.phi-comments__status {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: rgba(214,228,235,.55);
+  font-family: "Saira", sans-serif;
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+.phi-comments__body {
+  padding: 28px 30px 30px;
+  background: rgba(8,12,14,.34);
+  border: 1px solid rgba(89,126,142,.14);
+  border-top: 0;
+  backdrop-filter: blur(11px) saturate(.75);
+}
+.phi-comments__label {
+  margin-bottom: 14px;
+  color: rgba(56,189,248,.7);
+  font: 600 10px/1 "Saira", sans-serif;
+  letter-spacing: .15em;
+}
+/* Waline visual reset: keep functionality, restyle the default light blog look. */
+.phi-waline {
+  --waline-font-size: 14px;
+  --waline-white: #f4f8fa;
+  --waline-light-grey: #98a7ad;
+  --waline-grey: #62747c;
+  --waline-dark-grey: #25333a;
+  --waline-theme-color: #39b9e8;
+  --waline-active-color: #7ddcff;
+  --waline-color: #c7d3d7;
+  --waline-bg-color: transparent;
+  --waline-bg-color-light: rgba(255,255,255,.035);
+  --waline-bg-color-hover: rgba(57,185,232,.05);
+  --waline-border-color: rgba(89,126,142,.18);
+  --waline-disable-bg-color: rgba(255,255,255,.025);
+  --waline-disable-color: #66757b;
+  --waline-code-bg-color: #050809;
+  --waline-bq-color: rgba(57,185,232,.8);
+}
+.phi-waline .wl-panel,
+.phi-waline .wl-editor,
+.phi-waline .wl-card,
+.phi-waline .wl-login-info,
+.phi-waline .wl-preview {
+  background: rgba(0,0,0,.18) !important;
+  border-color: rgba(89,126,142,.18) !important;
+}
+.phi-waline .wl-editor,
+.phi-waline textarea {
+  font-family: "Saira", "Noto Sans CJK SC", "Noto Sans CJK", sans-serif !important;
+}
+.phi-waline input,
+.phi-waline textarea {
+  color: #d8e2e5 !important;
+}
+.phi-waline .wl-btn {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.phi-waline a {
+  color: #54c8f0 !important;
+}
+.phi-waline .wl-user,
+.phi-waline .wl-powerby,
+.phi-waline .wl-empty {
+  color: #73838a !important;
+}
+@media (max-width: 800px) {
+  .phi-comments__body { padding: 22px 16px 24px; }
+  .phi-comments__tab { min-width: 122px; padding: 0 14px; }
+}
+
+
+
+/* ============================================================
+   v6.7 — archive / tag pages follow Saturn COLLECTION shell
+   ============================================================ */
+.phi-collection-page--archive .phi-collection-body,
+.phi-collection-page--tags .phi-collection-body,
+.phi-collection-page--tag-detail .phi-collection-body {
+  padding-top: 26px;
+}
+
+.phi-collection-page--archive .phi-collection-filelist {
+  border-top: 0;
+}
+
+.phi-collection-group-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 30px;
+  padding: 0 4px 6px;
+  border-bottom: 1px solid rgba(192,211,213,.16);
+  color: #e5eeee;
+  font: 700 16px/1 var(--phi-mono);
+  letter-spacing: .05em;
+}
+.phi-collection-group-label small {
+  color: #5f7075;
+  font: 8px/1 var(--phi-mono);
+  letter-spacing: .12em;
+}
+.phi-collection-page--archive .phi-collection-file + .phi-collection-file {
+  border-top: 0;
+}
+.phi-collection-page--archive .phi-collection-file {
+  min-height: 58px;
+}
+.phi-collection-page--archive .phi-collection-file__title {
+  font-size: 14px;
+}
+
+.phi-tag-collection-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.phi-tag-collection-card {
+  color: inherit;
+  text-decoration: none;
+}
+.phi-tag-collection-card::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 18px;
+  height: 18px;
+  border-top: 1px solid rgba(57,185,232,.48);
+  border-right: 1px solid rgba(57,185,232,.48);
+  opacity: .55;
+}
+.phi-tag-collection-card__body {
+  position: relative;
+  min-height: 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 17px;
+  background: #0b1012;
+  border: 1px solid rgba(184,203,206,.20);
+}
+.phi-tag-collection-card__body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: #1688c1;
+  opacity: .82;
+}
+.phi-tag-collection-card__eyebrow {
+  margin-bottom: 8px;
+  color: rgba(57,185,232,.72);
+  font: 8px/1 var(--phi-mono);
+  letter-spacing: .14em;
+}
+.phi-tag-collection-card strong {
+  color: #edf3f4;
+  font: 500 24px/1.05 var(--phi-mono);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.phi-tag-collection-card small {
+  margin-top: 8px;
+  color: #66777b;
+  font: 8px/1 var(--phi-mono);
+  letter-spacing: .08em;
+}
+.phi-tag-collection-card:hover .phi-tag-collection-card__body {
+  background: rgba(22,136,193,.08);
+  border-color: rgba(57,185,232,.38);
+}
+.phi-collection-heading--tag h1 {
+  word-break: break-word;
+}
+
+@media (max-width: 820px) {
+  .phi-tag-collection-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  .phi-tag-collection-grid { grid-template-columns: 1fr; }
+  .phi-collection-group-label { font-size: 14px; }
+}
+
+/* ============================================================
+   v6.8 — ABOUT terminal + built-in core category folders
+   ============================================================ */
+.phi-about-page .phi-collection-shell {
+  background: rgba(5, 7, 9, .86);
+}
+.phi-about-body {
+  padding: 38px 40px 44px;
+}
+.phi-about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(220px, .7fr);
+  gap: 48px;
+  align-items: start;
+}
+.phi-about-main > h1 {
+  margin: 14px 0 5px;
+  color: #edf2f2;
+  font: 400 clamp(38px, 5vw, 62px)/.96 var(--phi-mono);
+  letter-spacing: -.035em;
+}
+.phi-about-main__subtitle {
+  margin: 8px 0 30px;
+  color: #617176;
+  font: 9px/1.4 var(--phi-mono);
+  letter-spacing: .11em;
+}
+.phi-about-content {
+  border-top: 1px solid rgba(192,211,213,.13);
+  padding-top: 25px;
+}
+.phi-about-meta {
+  display: grid;
+  gap: 1px;
+  padding-top: 4px;
+}
+.phi-about-readout {
+  padding: 16px 0 17px;
+  border-bottom: 1px solid rgba(192,211,213,.10);
+}
+.phi-about-readout span {
+  display: block;
+  margin-bottom: 7px;
+  color: rgba(57,185,232,.7);
+  font: 700 8px/1 var(--phi-mono);
+  letter-spacing: .16em;
+}
+.phi-about-readout strong {
+  display: block;
+  color: #e2ebed;
+  font: 500 16px/1.15 var(--phi-mono);
+  overflow-wrap: anywhere;
+}
+.phi-about-readout small {
+  display: block;
+  margin-top: 6px;
+  color: #56666b;
+  font: 8px/1 var(--phi-mono);
+  letter-spacing: .1em;
+}
+.phi-collection-empty {
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  color: #536368;
+  font: 9px/1 var(--phi-mono);
+  letter-spacing: .14em;
+}
+
+@media (max-width: 760px) {
+  .phi-about-body { padding: 26px 20px 32px; }
+  .phi-about-grid { grid-template-columns: 1fr; gap: 30px; }
+  .phi-about-meta { grid-template-columns: 1fr 1fr; gap: 0 18px; }
+}
+@media (max-width: 520px) {
+  .phi-about-meta { grid-template-columns: 1fr; }
+}
+
+/* v7.1 — shared desktop gyro for Saturn collection windows */
+.phi-collection-shell {
+  --gyro-x: 0deg;
+  --gyro-y: 0deg;
+  transform: perspective(1800px) rotateX(var(--gyro-y)) rotateY(var(--gyro-x));
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transition: transform .18s cubic-bezier(.2,.75,.25,1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .phi-collection-shell.is-gyro-active {
+    transition: transform .08s linear;
+  }
+}
+@media (max-width: 780px), (prefers-reduced-motion: reduce) {
+  .phi-collection-shell {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+
+/* v7.4 — tag detection moved into collection body */
+.phi-tags-detected {
+  margin: 0 0 24px;
+  color: #66777d;
+  font: 9px/1.4 var(--phi-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}

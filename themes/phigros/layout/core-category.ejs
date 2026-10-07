@@ -1,0 +1,43 @@
+<%
+  var categoryName = page.category_name || page.title || '';
+  var cat = site.categories.findOne({ name: categoryName });
+  var posts = cat ? cat.toArray() : [];
+  posts.sort(function(a, b) { return b.date - a.date; });
+  var coreCategories = (theme.saturn && theme.saturn.core_categories) || [];
+  var cfg = {};
+  coreCategories.some(function(item) {
+    if (item.name === categoryName) { cfg = item; return true; }
+    return false;
+  });
+%>
+
+<div class="phi-collection-page phi-core-category-page">
+  <div class="phi-collection-shell">
+    <div class="phi-collection-topbar">
+      <span class="phi-collection-tab">//COLLECTION</span>
+      <span class="phi-collection-status" data-i18n="folder.content">FOLDER_CONTENT</span>
+    </div>
+
+    <div class="phi-collection-body">
+      <div class="phi-collection-heading phi-collection-heading--category">
+        <span class="phi-collection-heading__label" data-i18n="folder.information">FOLDER_INFORMATION</span>
+        <h1><%= cfg.title || categoryName %></h1>
+        <p><%= cfg.subtitle || ('CATEGORY // ' + categoryName) %> · <%= posts.length %> FILES</p>
+      </div>
+
+      <div class="phi-collection-filelist">
+        <% if (!posts.length) { %>
+          <div class="phi-collection-empty" data-i18n="collection.noFiles">NO FILES CONNECTED.</div>
+        <% } %>
+        <% posts.forEach(function(post, i) { %>
+          <a class="phi-collection-file" href="<%- url_for(post.path) %>">
+            <span class="phi-collection-file__index"><%= String(i + 1).padStart(2, '0') %></span>
+            <span class="phi-collection-file__date"><%= date(post.date, 'YYYY.MM.DD') %></span>
+            <span class="phi-collection-file__title"><%= post.title %></span>
+            <span class="phi-collection-file__arrow">›</span>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>

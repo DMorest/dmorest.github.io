@@ -1,0 +1,55 @@
+<%
+  var pagePath = String(page.path || '').replace(/^\//, '');
+  var isAbout = page.title === '关于' || pagePath.indexOf('about/') === 0 || pagePath === 'about/index.html';
+%>
+
+<% if (isAbout) { %>
+<div class="phi-collection-page phi-about-page">
+  <div class="phi-collection-shell">
+    <div class="phi-collection-topbar">
+      <span class="phi-collection-tab">//ABOUT</span>
+      <span class="phi-collection-status" data-i18n="about.terminal">PHIGROS_TERMINAL</span>
+    </div>
+
+    <div class="phi-collection-body phi-about-body">
+      <div class="phi-about-grid">
+        <section class="phi-about-main">
+          <span class="phi-collection-heading__label" data-i18n="about.systemProfile">SYSTEM_PROFILE</span>
+          <p class="phi-about-main__subtitle" data-i18n="about.operatorProfile">PHATASiA LOTUS LAND // LIMBO PROFILE</p>
+
+          <div class="phi-about-content phi-post__content">
+            <%- page.content %>
+          </div>
+        </section>
+
+        <aside class="phi-about-meta" aria-label="System information">
+          <div class="phi-about-readout">
+            <span data-i18n="about.terminalLabel">TERMINAL</span>
+            <strong>PHIGROS</strong>
+            <small data-i18n="about.statusOnline">STATUS // ONLINE</small>
+          </div>
+          <div class="phi-about-readout">
+            <span data-i18n="about.supervisor">SUPERVISOR</span>
+            <strong><%= config.author || 'D.MOREST' %></strong>
+            <small data-i18n="about.channelOpen">CHANNEL // OPEN</small>
+          </div>
+          <div class="phi-about-readout">
+            <span data-i18n="about.contact">CONTACT</span>
+            <strong><%= (theme.home && theme.home.misc && theme.home.misc.contact) || config.email || '—' %></strong>
+            <small data-i18n="about.mailAvailable">MAIL // AVAILABLE</small>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+<% } else { %>
+<article class="phi-post phi-page">
+  <header class="phi-post__header">
+    <h1 class="phi-post__title"><%= page.title %></h1>
+  </header>
+  <div class="phi-post__content">
+    <%- page.content %>
+  </div>
+</article>
+<% } %>

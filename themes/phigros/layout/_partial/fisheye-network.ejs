@@ -1,0 +1,82 @@
+<%
+/*
+ * Phigros title-screen network — rebuilt as an actual equilateral-triangle
+ * tessellation, rotated 90 degrees so the triangles point left/right.
+ *
+ * There are no independent square-grid or diamond layers here: every visible
+ * background edge belongs to one of these equilateral triangles.
+ * A mild barrel/fisheye mapping is applied to the x coordinate. Each edge is
+ * sampled into short segments so the side curvature is genuinely curved,
+ * rather than just two straight endpoints being joined.
+ */
+var W = 1600, H = 900;
+var side = 115;
+var triH = side * 0.8660254038;
+var cx = W / 2, cy = H / 2;
+var ROT_MARGIN = 520;
+var EDGE_STEPS = 10;
+
+function rotate90(x, y) {
+  return [cx - (y - cy), cy + (x - cx)];
+}
+
+function warpPoint(x, y) {
+  var p = rotate90(x, y);
+  var dx = (p[0] - cx) / cx;
+  var dy = (p[1] - cy) / cy;
+  var r2 = dx * dx + dy * dy;
+  var factor = 1 + 0.11 * r2;
+  return [cx + cx * dx * factor, cy + cy * dy * factor];
+}
+
+function mapPoint(x, y) {
+  return warpPoint(x, y);
+}
+
+function edgePoints(a, b) {
+  var out = [];
+  for (var k = 0; k <= EDGE_STEPS; k++) {
+    var t = k / EDGE_STEPS;
+    var x = a[0] + (b[0] - a[0]) * t;
+    var y = a[1] + (b[1] - a[1]) * t;
+    out.push(mapPoint(x, y));
+  }
+  return out;
+}
+
+function trianglePath(a, b, c) {
+  var edges = [edgePoints(a, b), edgePoints(b, c), edgePoints(c, a)];
+  var d = '';
+  for (var e = 0; e < edges.length; e++) {
+    var pts = edges[e];
+    for (var q = 0; q < pts.length; q++) {
+      d += ((e === 0 && q === 0) ? 'M ' : ' L ')
+        + pts[q][0].toFixed(1) + ' ' + pts[q][1].toFixed(1);
+    }
+  }
+  return d + ' Z';
+}
+
+/* Standard triangular tiling before the 90° rotation. */
+var cols = Math.ceil((W + H + ROT_MARGIN * 2) / side) + 4;
+var rows = Math.ceil((W + H + ROT_MARGIN * 2) / triH) + 4;
+var ox = -ROT_MARGIN;
+var oy = -ROT_MARGIN;
+
+for (var r = -2; r < rows; r++) {
+  var y = oy + r * triH;
+  var rowShift = r * side / 2;
+  for (var c = -2; c < cols; c++) {
+    var x = ox + c * side + rowShift;
+
+    var A = [x, y];
+    var B = [x + side, y];
+    var C = [x + side / 2, y + triH];
+    var D = [x + side * 1.5, y + triH];
+
+    /* The two orientations are the complete equilateral-triangle tessellation. */
+    %><path d="<%= trianglePath(A, B, C) %>"/><%
+    %><path d="<%= trianglePath(B, D, C) %>"/><%
+  }
+}
+%>

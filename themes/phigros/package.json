@@ -1,0 +1,10 @@
+{
+  "name": "hexo-theme-phigros",
+  "version": "1.0.0",
+  "description": "A Phigros-inspired dark theme for Hexo",
+  "keywords": ["hexo", "theme", "phigros", "dark", "parallelogram"],
+  "license": "MIT",
+  "peerDependencies": {
+    "hexo": ">=5.0.0"
+  }
+}

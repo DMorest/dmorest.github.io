@@ -1,0 +1,30 @@
+<%
+  var excerpt = post.excerpt ? strip_html(post.excerpt) : strip_html(post.content || '');
+  var maxLen = (theme.index && theme.index.excerpt_length) || 140;
+  if (excerpt.length > maxLen) excerpt = excerpt.substring(0, maxLen) + '…';
+%>
+
+<article class="phi-card">
+  <a href="<%- url_for(post.path) %>" class="phi-card__link">
+    <% if (post.categories && post.categories.length) { %>
+      <div class="phi-card__tags">
+        <% post.categories.forEach(function(cat, i) { if (i < 2) { %>
+          <span class="phi-tag phi-tag--cat"><%= cat.name %></span>
+        <% } }); %>
+      </div>
+    <% } %>
+
+    <h2 class="phi-card__title"><%= post.title %></h2>
+
+    <% if (excerpt) { %>
+    <p class="phi-card__excerpt"><%= excerpt %></p>
+    <% } %>
+
+    <div class="phi-card__meta">
+      <time datetime="<%= post.date.toISOString() %>"><%= date(post.date, 'YYYY.MM.DD') %></time>
+      <span class="phi-card__dot"></span>
+      <span><%= post.length || 0 %> <%= __('post.words') %></span>
+      <span style="margin-left:auto">DATA // <%= String(post.slug || '').substring(0, 12).toUpperCase() %></span>
+    </div>
+  </a>
+</article>

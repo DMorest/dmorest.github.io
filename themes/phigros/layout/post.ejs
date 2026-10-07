@@ -1,0 +1,170 @@
+<%
+  /* ==========================================================
+     Saturn Virtual OS / PhigrOS file viewer
+     Front Matter supported:
+       analysis: 100
+       analysis_status: "ANALYSIS COMPLETED."
+       supervisor: "deathMark"
+       category_label: "main"
+       folder_cover: "/images/cover.jpg"
+       folder_title: "Transit Tide"
+       folder_subtitle: "Chapter VII"
+       folder_completion: 74
+       folder_items: 14
+       folder:
+         category: main
+         title: Transit Tide
+         subtitle: Chapter VII
+         cover: /images/cover.jpg
+         completion: 74
+         items: 14
+         posts: [slug-a, slug-b]   # optional explicit contents
+     ========================================================== */
+  var analysis = Number(page.analysis);
+  if (!isFinite(analysis)) analysis = 100;
+  analysis = Math.max(0, Math.min(100, analysis));
+
+  var analysisStatus = page.analysis_status;
+  if (!analysisStatus) {
+    analysisStatus = analysis >= 100 ? 'ANALYSIS COMPLETED.' : (analysis + '% COLLECTED.');
+  }
+
+  var supervisor = page.supervisor || (config.author || 'D.O.M.E');
+  /* Hexo 8 / Warehouse 6 exposes page.categories as a Query, not a native array. */
+  var pageCategories = (page.categories && typeof page.categories.toArray === 'function') ? page.categories.toArray() : [];
+  var categoryLabel = page.category_label;
+  if (!categoryLabel) {
+    categoryLabel = pageCategories.length ? pageCategories[0].name : 'main';
+  }
+
+  var rawFolder = page.folder;
+  var folderConfig = (rawFolder && typeof rawFolder === 'object' && !Array.isArray(rawFolder)) ? rawFolder : {};
+  var primaryCategory = pageCategories.length ? pageCategories[0].name : null;
+  var categoryFolders = (theme.saturn && theme.saturn.category_folders) || {};
+  var categoryConfig = primaryCategory && categoryFolders[primaryCategory] ? categoryFolders[primaryCategory] : {};
+
+  /* Explicit per-post folder settings outrank category defaults. Flat legacy
+     fields are accepted as well so existing posts keep working. */
+  var folderCategory = folderConfig.category || page.folder_category || primaryCategory || '';
+  var selectedCategoryConfig = folderCategory && categoryFolders[folderCategory] ? categoryFolders[folderCategory] : categoryConfig;
+  var folderTitle = folderConfig.title || page.folder_title || selectedCategoryConfig.title || folderCategory || page.title;
+  var folderSubtitle = folderConfig.subtitle || page.folder_subtitle || selectedCategoryConfig.subtitle || (folderCategory ? ('CATEGORY // ' + folderCategory) : '');
+  var folderCompletion = Number(folderConfig.completion != null ? folderConfig.completion : (page.folder_completion != null ? page.folder_completion : selectedCategoryConfig.completion));
+  if (!isFinite(folderCompletion)) folderCompletion = 100;
+  folderCompletion = Math.max(0, Math.min(100, folderCompletion));
+
+  var folderCover = folderConfig.cover || page.folder_cover || selectedCategoryConfig.cover || page.cover || page.thumbnail || '';
+  var explicitFolderPosts = Array.isArray(folderConfig.posts) ? folderConfig.posts : (Array.isArray(page.folder_posts) ? page.folder_posts : null);
+  var related = [];
+  var relatedPool = [];
+
+  /* Default folder contents = same-category posts. A custom folder can instead
+     provide an explicit list of post slugs/paths in folder.posts. */
+  site.posts.sort('date', -1).each(function(p) {
+    if (p.path === page.path) return;
+    if (explicitFolderPosts) {
+      var match = explicitFolderPosts.indexOf(p.slug) !== -1 || explicitFolderPosts.indexOf(p.path) !== -1 || explicitFolderPosts.indexOf(p.title) !== -1;
+      if (match) relatedPool.push(p);
+      return;
+    }
+    if (folderCategory) {
+      var sameCategory = false;
+      var postCategories = (p.categories && typeof p.categories.toArray === 'function') ? p.categories.toArray() : [];
+      postCategories.forEach(function(cat) { if (cat.name === folderCategory) sameCategory = true; });
+      if (!sameCategory) return;
+    }
+    relatedPool.push(p);
+  });
+
+  var folderItemsDefault = relatedPool.length + 1;
+  var folderItems = Number(folderConfig.items != null ? folderConfig.items : (page.folder_items != null ? page.folder_items : selectedCategoryConfig.items));
+  if (!isFinite(folderItems)) folderItems = folderItemsDefault;
+  folderItems = Math.max(1, folderItems);
+
+  relatedPool.slice(0, 9).forEach(function(p) { related.push(p); });
+%>
+
+<article class="phi-file-view">
+  <aside class="phi-folder-panel">
+    <div class="phi-folder-head" data-i18n="folder.information">FOLDER_INFORMATION</div>
+
+    <div class="phi-folder-cover<%= folderCover ? '' : ' is-empty' %>">
+      <% if (folderCover) { %>
+        <img src="<%- url_for(folderCover) %>" alt="">
+      <% } %>
+      <div class="phi-folder-cover__shade"></div>
+      <div class="phi-folder-cover__info">
+        <% if (folderSubtitle) { %><span class="phi-folder-cover__sub"><%= folderSubtitle %></span><% } %>
+        <strong><%= folderTitle %></strong>
+        <span><span data-i18n="folder.completion">Completion</span> <%= folderCompletion %>%</span>
+      </div>
+      <div class="phi-folder-cover__line" style="width:<%= folderCompletion %>%"></div>
+    </div>
+
+    <div class="phi-folder-section" data-i18n="folder.section">CONTENT</div>
+    <nav class="phi-folder-list" aria-label="Folder contents">
+      <a class="phi-folder-item is-current" href="<%- url_for(page.path) %>">
+        <span><%= page.title %></span>
+      </a>
+      <% related.forEach(function(item) { %>
+        <a class="phi-folder-item" href="<%- url_for(item.path) %>">
+          <span><%= item.title %></span>
+        </a>
+      <% }); %>
+    </nav>
+
+    <div class="phi-folder-footer">
+      <span><%= Math.min(folderItems, related.length + 1) %>/<%= folderItems %></span>
+      <a href="<%- url_for('/') %>">&lt; <span data-i18n="folder.back">BACK</span></a>
+    </div>
+  </aside>
+
+  <section class="phi-file-panel">
+    <div class="phi-file-topbar" style="--analysis-progress:<%= analysis %>%" aria-label="<%= analysisStatus %>">
+      <div class="phi-file-tab">FILE_CONTENT</div>
+      <div class="phi-analysis-status">
+        <span><%= analysisStatus %></span>
+      </div>
+    </div>
+
+    <header class="phi-file-header">
+      <h1><%= page.title %></h1>
+      <div class="phi-file-meta">
+        <span class="phi-file-meta__label" data-i18n="post.date">DATE</span>
+        <span class="phi-file-meta__value"><%= date(page.date, 'YYYY/MM/DD') %></span>
+        <span class="phi-file-meta__label" data-i18n="post.supervisor">SUPERVISOR</span>
+        <span class="phi-file-meta__value"><%= supervisor %></span>
+        <span class="phi-file-meta__label" data-i18n="post.category">CATEGORY</span>
+        <span class="phi-file-meta__value"><%= categoryLabel %></span>
+      </div>
+      <div class="phi-file-rule"></div>
+    </header>
+
+    <div class="phi-file-content">
+      <%- page.content %>
+    </div>
+
+    <% if (theme.post.show_prev_next !== false && (page.prev || page.next)) { %>
+    <nav class="phi-file-nav">
+      <% if (page.prev) { %>
+        <a href="<%- url_for(page.prev.path) %>">
+          <span>&lt;&lt; PREVIOUS FILE</span>
+          <strong><%= page.prev.title %></strong>
+        </a>
+      <% } else { %><span></span><% } %>
+      <% if (page.next) { %>
+        <a href="<%- url_for(page.next.path) %>" class="is-next">
+          <span>NEXT FILE &gt;&gt;</span>
+          <strong><%= page.next.title %></strong>
+        </a>
+      <% } %>
+    </nav>
+    <% } %>
+
+    <div class="phi-file-stats" aria-label="Page views">
+      <span class="waline-pageview-count" aria-live="polite">—</span> VIEWS
+    </div>
+
+    <%- partial('_partial/waline') %>
+  </section>
+</article>

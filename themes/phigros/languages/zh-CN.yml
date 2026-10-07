@@ -1,0 +1,20 @@
+post:
+  words: 字
+  minutes: 分钟阅读
+  prev: 上一篇
+  next: 下一篇
+  posted: 发布于
+archive:
+  title: 归档
+  total: "共 %d 篇文章"
+tag:
+  title: 标签
+category:
+  title: 分类
+  all: 全部分类
+  posts: 篇文章
+pagination:
+  prev: 上一页
+  next: 下一页
+taxonomy:
+  posts: 篇文章

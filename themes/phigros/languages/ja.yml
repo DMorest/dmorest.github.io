@@ -1,0 +1,20 @@
+post:
+  words: 文字
+  minutes: 分で読めます
+  prev: 前の記事
+  next: 次の記事
+  posted: 投稿日
+archive:
+  title: アーカイブ
+  total: "全 %d 件の記事"
+tag:
+  title: タグ
+category:
+  title: カテゴリ
+  all: すべてのカテゴリ
+  posts: 件の記事
+pagination:
+  prev: 前へ
+  next: 次へ
+taxonomy:
+  posts: 件の記事

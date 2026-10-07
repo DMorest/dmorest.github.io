@@ -1,0 +1,27 @@
+<%
+  var tags = site.tags.toArray();
+  tags.sort(function(a, b) { return b.length - a.length || a.name.localeCompare(b.name); });
+%>
+
+<div class="phi-collection-page phi-collection-page--tags">
+  <div class="phi-collection-shell">
+    <div class="phi-collection-topbar">
+      <span class="phi-collection-tab">//TAGS</span>
+    </div>
+
+    <div class="phi-collection-body">
+      <p class="phi-tags-detected"><%= tags.length %> TAGS DETECTED</p>
+      <div class="phi-collection-grid phi-tag-collection-grid">
+        <% tags.forEach(function(tag) { %>
+          <a class="phi-collection-card phi-tag-collection-card" href="<%- url_for(tag.path) %>">
+            <div class="phi-tag-collection-card__body">
+              <span class="phi-tag-collection-card__eyebrow" data-i18n="tag.label">TAG</span>
+              <strong>#<%= tag.name %></strong>
+              <small data-i18n-number="collection.files" data-i18n-count="<%= tag.length %>"><%= tag.length %> FILES</small>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
