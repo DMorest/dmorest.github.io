@@ -1,74 +1,93 @@
 <%
   /* ==========================================================
      Saturn Virtual OS / PhigrOS file viewer
-     Front Matter supported:
-       analysis: 100
-       analysis_status: "ANALYSIS COMPLETED."
-       supervisor: "deathMark"
-       category_label: "main"
-       folder_cover: "/images/cover.jpg"
-       folder_title: "Transit Tide"
-       folder_subtitle: "Chapter VII"
-       folder_completion: 74
-       folder_items: 14
-       folder:
-         category: main
-         title: Transit Tide
-         subtitle: Chapter VII
-         cover: /images/cover.jpg
-         completion: 74
-         items: 14
-         posts: [slug-a, slug-b]   # optional explicit contents
+     Category IDs are English internally; name is the external label.
      ========================================================== */
   var analysis = Number(page.analysis);
   if (!isFinite(analysis)) analysis = 100;
   analysis = Math.max(0, Math.min(100, analysis));
 
-  /* Status is derived only from analysis; manual analysis_status is ignored. */
   var analysisStatus = analysis >= 100 ? 'ANALYZATION COMPLETE.' : (analysis + '% ANALYZED.');
 
+  var commentFlag = String(page.comments == null ? '' : page.comments).trim().toLowerCase();
+  var commentsEnabled = !(commentFlag === 'false' || commentFlag === '0' || commentFlag === 'no') && (!theme.comments || theme.comments.enable !== false);
+
   var supervisor = page.supervisor || (config.author || 'D.O.M.E');
-  /* Hexo 8 / Warehouse 6 exposes page.categories as a Query, not a native array. */
   var pageCategories = (page.categories && typeof page.categories.toArray === 'function') ? page.categories.toArray() : [];
+
+  var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};
+  var folderDefaults = (theme.saturn && theme.saturn.folder_defaults) || {};
+
+  /* Resolve both the new English internal ID and the legacy external name. */
+  function resolveCategoryId(value) {
+    var key = String(value == null ? '' : value).trim();
+    if (!key) return '';
+    if (categoryConfigs[key]) return key;
+    var found = '';
+    Object.keys(categoryConfigs).some(function(id) {
+      var cfg = categoryConfigs[id] || {};
+      if (String(cfg.name || '').trim() === key) {
+        found = id;
+        return true;
+      }
+      return false;
+    });
+    return found || key;
+  }
+
+  function getCategoryConfig(value) {
+    var id = resolveCategoryId(value);
+    return id && categoryConfigs[id] ? categoryConfigs[id] : {};
+  }
+
+  var primaryCategoryRaw = pageCategories.length ? pageCategories[0].name : '';
+  var primaryCategory = resolveCategoryId(primaryCategoryRaw);
+  var categoryConfig = getCategoryConfig(primaryCategory);
   var categoryLabel = page.category_label;
-  if (!categoryLabel) {
-    categoryLabel = pageCategories.length ? pageCategories[0].name : 'main';
+  if (categoryLabel) {
+    var manualLabelId = resolveCategoryId(categoryLabel);
+    if (categoryConfigs[manualLabelId] && categoryConfigs[manualLabelId].name) {
+      categoryLabel = categoryConfigs[manualLabelId].name;
+    }
+  } else {
+    categoryLabel = categoryConfig.name || primaryCategory || (theme.saturn && theme.saturn.category_default) || 'main';
   }
 
   var rawFolder = page.folder;
   var folderConfig = (rawFolder && typeof rawFolder === 'object' && !Array.isArray(rawFolder)) ? rawFolder : {};
-  var primaryCategory = pageCategories.length ? pageCategories[0].name : null;
-  var categoryFolders = (theme.saturn && theme.saturn.category_folders) || {};
-  var categoryConfig = primaryCategory && categoryFolders[primaryCategory] ? categoryFolders[primaryCategory] : {};
 
-  /* Explicit per-post folder settings outrank category defaults. Flat legacy
-     fields are accepted as well so existing posts keep working. */
-  var folderCategory = folderConfig.category || page.folder_category || primaryCategory || '';
-  var selectedCategoryConfig = folderCategory && categoryFolders[folderCategory] ? categoryFolders[folderCategory] : categoryConfig;
-  var folderTitle = folderConfig.title || page.folder_title || selectedCategoryConfig.title || folderCategory || page.title;
-  var folderCompletion = Number(folderConfig.completion != null ? folderConfig.completion : (page.folder_completion != null ? page.folder_completion : selectedCategoryConfig.completion));
+  /* Explicit per-post folder settings outrank category defaults. */
+  var folderCategory = resolveCategoryId(folderConfig.category || page.folder_category || primaryCategory || '');
+  var selectedCategoryConfig = getCategoryConfig(folderCategory);
+  var selectedFolderDefault = folderCategory && folderDefaults[folderCategory] ? folderDefaults[folderCategory] : {};
+
+  var folderTitle = folderConfig.title || page.folder_title || selectedCategoryConfig.title || selectedCategoryConfig.name || selectedFolderDefault.title || selectedFolderDefault.name || folderCategory || page.title;
+  var folderCompletion = Number(folderConfig.completion != null ? folderConfig.completion : (page.folder_completion != null ? page.folder_completion : (selectedCategoryConfig.completion != null ? selectedCategoryConfig.completion : selectedFolderDefault.completion)));
   if (!isFinite(folderCompletion)) folderCompletion = 100;
   folderCompletion = Math.max(0, Math.min(100, folderCompletion));
 
-  var folderCover = folderConfig.cover || page.folder_cover || selectedCategoryConfig.cover || page.cover || page.thumbnail || '';
+  /* A categorized article uses that category's cover by default. */
+  var folderCover = folderConfig.cover || page.folder_cover || selectedCategoryConfig.cover || selectedFolderDefault.cover || page.cover || page.thumbnail || '';
   var explicitFolderPosts = Array.isArray(folderConfig.posts) ? folderConfig.posts : (Array.isArray(page.folder_posts) ? page.folder_posts : null);
   var related = [];
   var relatedPool = [];
   var hasUsableCategory = !!primaryCategory;
 
-  /* Default folder contents = same-category posts. A custom folder can instead
-     provide an explicit list of post slugs/paths in folder.posts. */
   site.posts.sort('date', -1).each(function(p) {
     if (p.path === page.path) return;
+
     if (explicitFolderPosts) {
       var match = explicitFolderPosts.indexOf(p.slug) !== -1 || explicitFolderPosts.indexOf(p.path) !== -1 || explicitFolderPosts.indexOf(p.title) !== -1;
       if (match) relatedPool.push(p);
       return;
     }
+
     if (folderCategory && hasUsableCategory) {
       var sameCategory = false;
       var postCategories = (p.categories && typeof p.categories.toArray === 'function') ? p.categories.toArray() : [];
-      postCategories.forEach(function(cat) { if (cat.name === folderCategory) sameCategory = true; });
+      postCategories.forEach(function(cat) {
+        if (resolveCategoryId(cat.name) === folderCategory) sameCategory = true;
+      });
       if (!sameCategory) return;
     }
     relatedPool.push(p);
@@ -76,14 +95,13 @@
 
   if (!hasUsableCategory && !explicitFolderPosts) relatedPool = [];
   var folderItemsDefault = relatedPool.length + 1;
-  var folderItems = Number(folderConfig.items != null ? folderConfig.items : (page.folder_items != null ? page.folder_items : selectedCategoryConfig.items));
+  var folderItems = Number(folderConfig.items != null ? folderConfig.items : (page.folder_items != null ? page.folder_items : (selectedCategoryConfig.items != null ? selectedCategoryConfig.items : selectedFolderDefault.items)));
   if (!isFinite(folderItems)) folderItems = folderItemsDefault;
   folderItems = Math.max(1, folderItems);
-
   relatedPool.slice(0, 9).forEach(function(p) { related.push(p); });
 %>
 
-<article class="phi-file-view">
+<article class="phi-file-view<%= commentsEnabled ? "" : " is-comments-closed" %>">
   <aside class="phi-folder-panel">
     <div class="phi-folder-head" data-i18n="folder.information">FOLDER_INFORMATION</div>
 

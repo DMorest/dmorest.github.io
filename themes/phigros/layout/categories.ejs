@@ -1,42 +1,49 @@
 <%
-  /* Stable category source: scan actual posts. This avoids Warehouse category
-     collection edge cases and keeps the three built-in folders visible. */
   var allPosts = site.posts.toArray();
+  var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};
+  var fallbackCover = (theme.saturn && theme.saturn.category_fallback_cover) || '/images/category-default.jpg';
+
+  function resolveCategoryId(value) {
+    var key = String(value == null ? '' : value).trim();
+    if (!key) return '';
+    if (categoryConfigs[key]) return key;
+    var found = '';
+    Object.keys(categoryConfigs).some(function(id) {
+      var cfg = categoryConfigs[id] || {};
+      if (String(cfg.name || '').trim() === key) {
+        found = id;
+        return true;
+      }
+      return false;
+    });
+    return found || key;
+  }
+
   var categoryMap = {};
   allPosts.forEach(function(post) {
     var pcs = (post.categories && typeof post.categories.toArray === 'function') ? post.categories.toArray() : [];
     pcs.forEach(function(cat) {
-      var name = String(cat && cat.name || '').trim();
-      if (!name) return;
-      if (!categoryMap[name]) categoryMap[name] = { name: name, posts: [] };
-      categoryMap[name].posts.push(post);
+      var id = resolveCategoryId(cat && cat.name);
+      if (!id) return;
+      if (!categoryMap[id]) categoryMap[id] = { id: id, posts: [] };
+      categoryMap[id].posts.push(post);
     });
   });
-  Object.keys(categoryMap).forEach(function(name) {
-    categoryMap[name].posts.sort(function(a,b){ return b.date - a.date; });
-    categoryMap[name].length = categoryMap[name].posts.length;
-  });
-  var cats = Object.keys(categoryMap).map(function(name){ return categoryMap[name]; });
-  cats.sort(function(a,b){ return b.length - a.length || a.name.localeCompare(b.name); });
 
-  var categoryFolders = (theme.saturn && theme.saturn.category_folders) || {};
-  var configuredCore = (theme.saturn && theme.saturn.core_categories) || [];
-  var coreCategories = configuredCore.length ? configuredCore : [
-    {name:'日志', slug:'log', title:'日志', cover:'/images/home/log.jpg'},
-    {name:'教程', slug:'tutorial', title:'教程', cover:'/images/home/tutorial.jpg'},
-    {name:'创作', slug:'creative', title:'创作', cover:'/images/home/creation.jpg'}
-  ];
-  var configuredFeatures = (theme.home && theme.home.features) || [];
-  var homeFeatures = configuredFeatures.length ? configuredFeatures : [
-    {title:'日志', image:'/images/home/log.jpg'},
-    {title:'教程', image:'/images/home/tutorial.jpg'},
-    {title:'创作', image:'/images/home/creation.jpg'}
-  ];
-  var fallbackCover = (theme.saturn && theme.saturn.category_fallback_cover) || '/images/category-default.jpg';
-  var coreNames = {};
-  coreCategories.forEach(function(core){ coreNames[String(core.name)] = true; });
-  function postsForCategory(name){ return categoryMap[String(name || '').trim()] ? categoryMap[String(name || '').trim()].posts : []; }
+  Object.keys(categoryMap).forEach(function(id) {
+    categoryMap[id].posts.sort(function(a, b) { return b.date - a.date; });
+    categoryMap[id].length = categoryMap[id].posts.length;
+  });
+
+  var categoryIds = Object.keys(categoryMap);
+  categoryIds.sort(function(a, b) {
+    return categoryMap[b].length - categoryMap[a].length || a.localeCompare(b);
+  });
+
+  var configuredIds = Object.keys(categoryConfigs);
+  var visibleCount = configuredIds.length + categoryIds.filter(function(id) { return !categoryConfigs[id]; }).length;
 %>
+
 <div class="phi-collection-page">
   <div class="phi-collection-shell">
     <div class="phi-collection-topbar">
@@ -47,14 +54,15 @@
       <div class="phi-collection-heading">
         <span class="phi-collection-heading__label" data-i18n="category.label">CATEGORY</span>
         <h1 data-i18n="category.collection">COLLECTION</h1>
-        <p><span data-i18n-number="category.foldersAvailable" data-i18n-count="<%= coreCategories.length + cats.filter(function(cat){ return !coreNames[cat.name]; }).length %>"><%= coreCategories.length + cats.filter(function(cat){ return !coreNames[cat.name]; }).length %> folders available</span></p>
+        <p><span data-i18n-number="category.foldersAvailable" data-i18n-count="<%= visibleCount %>"><%= visibleCount %> folders available</span></p>
       </div>
+
       <div class="phi-collection-grid">
-        <% coreCategories.forEach(function(core,index){
-          var posts = postsForCategory(core.name);
-          var sharedImage = (homeFeatures[index] && homeFeatures[index].image) || core.cover || '';
-          var cover = sharedImage || fallbackCover;
-          var cardTitle = core.title || core.name;
+        <% configuredIds.forEach(function(id) {
+          var cfg = categoryConfigs[id] || {};
+          var posts = categoryMap[id] ? categoryMap[id].posts : [];
+          var cover = cfg.cover || fallbackCover;
+          var cardTitle = cfg.name || cfg.title || id;
         %>
           <% if (posts.length) { %>
             <a class="phi-collection-card" href="<%- url_for(posts[0].path) %>">
@@ -66,11 +74,17 @@
             </div>
           <% } %>
         <% }); %>
-        <% cats.forEach(function(cat){ if(coreNames[cat.name]) return; var cfg=categoryFolders[cat.name]||{}; var posts=cat.posts; var cover=cfg.cover||fallbackCover; var cardTitle=cfg.title||cat.name; %>
+
+        <% categoryIds.forEach(function(id) {
+          if (categoryConfigs[id]) return;
+          var posts = categoryMap[id].posts;
+          var cardTitle = id;
+          var cover = fallbackCover;
+        %>
           <% if (posts.length) { %>
-            <a class="phi-collection-card" href="<%- url_for(posts[0].path) %>"><div class="phi-collection-card__media"><img src="<%- url_for(cover) %>" alt="" loading="lazy" onerror="this.onerror=null;this.src='<%- url_for(fallbackCover) %>';"><div class="phi-collection-card__shade"></div><div class="phi-collection-card__text"><strong><%= cardTitle %></strong><small data-i18n-number="collection.files" data-i18n-count="<%= posts.length %>"><%= posts.length %> FILES</small></div></div></a>
-          <% } else { %>
-            <div class="phi-collection-card is-disabled" aria-disabled="true"><div class="phi-collection-card__media is-empty"><img src="<%- url_for(cover) %>" alt="" loading="lazy" onerror="this.onerror=null;this.src='<%- url_for(fallbackCover) %>';"><div class="phi-collection-card__disabled-veil"></div><div class="phi-collection-card__text"><strong><%= cardTitle %></strong><small>0 FILES</small></div></div></div>
+            <a class="phi-collection-card" href="<%- url_for(posts[0].path) %>">
+              <div class="phi-collection-card__media"><img src="<%- url_for(cover) %>" alt="" loading="lazy"><div class="phi-collection-card__shade"></div><div class="phi-collection-card__text"><strong><%= cardTitle %></strong><small data-i18n-number="collection.files" data-i18n-count="<%= posts.length %>"><%= posts.length %> FILES</small></div></div>
+            </a>
           <% } %>
         <% }); %>
       </div>

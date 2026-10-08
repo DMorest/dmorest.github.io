@@ -2,6 +2,18 @@
   var excerpt = post.excerpt ? strip_html(post.excerpt) : strip_html(post.content || '');
   var maxLen = (theme.index && theme.index.excerpt_length) || 140;
   if (excerpt.length > maxLen) excerpt = excerpt.substring(0, maxLen) + '…';
+  var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};
+  function displayCategoryName(value) {
+    var key = String(value == null ? '' : value).trim();
+    if (categoryConfigs[key] && categoryConfigs[key].name) return categoryConfigs[key].name;
+    var found = '';
+    Object.keys(categoryConfigs).some(function(id) {
+      var cfg = categoryConfigs[id] || {};
+      if (String(cfg.name || '').trim() === key) { found = cfg.name; return true; }
+      return false;
+    });
+    return found || key;
+  }
 %>
 
 <article class="phi-card">
@@ -9,7 +21,7 @@
     <% if (post.categories && post.categories.length) { %>
       <div class="phi-card__tags">
         <% post.categories.forEach(function(cat, i) { if (i < 2) { %>
-          <span class="phi-tag phi-tag--cat"><%= cat.name %></span>
+          <span class="phi-tag phi-tag--cat"><%= displayCategoryName(cat.name) %></span>
         <% } }); %>
       </div>
     <% } %>

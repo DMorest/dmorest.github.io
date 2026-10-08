@@ -1,25 +1,32 @@
 <%
-  var categoryName = String(page.category_name || page.title || '').trim();
+  var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};
+  function resolveCategoryId(value) {
+    var key = String(value == null ? '' : value).trim();
+    if (!key) return '';
+    if (categoryConfigs[key]) return key;
+    var found = '';
+    Object.keys(categoryConfigs).some(function(id) {
+      var cfg = categoryConfigs[id] || {};
+      if (String(cfg.name || '').trim() === key) { found = id; return true; }
+      return false;
+    });
+    return found || key;
+  }
+
+  var categoryId = resolveCategoryId(page.category_id || page.category_name || page.title);
+  var cfg = categoryConfigs[categoryId] || {};
   var posts = [];
   site.posts.toArray().forEach(function(post) {
     var pcs = (post.categories && typeof post.categories.toArray === 'function') ? post.categories.toArray() : [];
     var matched = false;
-    pcs.forEach(function(cat) { if (String(cat && cat.name || '').trim() === categoryName) matched = true; });
+    pcs.forEach(function(cat) {
+      if (resolveCategoryId(cat && cat.name) === categoryId) matched = true;
+    });
     if (matched) posts.push(post);
   });
   posts.sort(function(a, b) { return b.date - a.date; });
-  var coreCategories = (theme.saturn && theme.saturn.core_categories) || [];
-  if (!coreCategories.length) coreCategories = [
-    {name:'日志',slug:'log',title:'日志'},
-    {name:'教程',slug:'tutorial',title:'教程'},
-    {name:'创作',slug:'creative',title:'创作'}
-  ];
-  var cfg = {};
-  coreCategories.some(function(item) {
-    if (String(item.name || '').trim() === categoryName) { cfg = item; return true; }
-    return false;
-  });
 %>
+
 <div class="phi-collection-page phi-core-category-page">
   <div class="phi-collection-shell">
     <div class="phi-collection-topbar">
@@ -29,7 +36,7 @@
     <div class="phi-collection-body">
       <div class="phi-collection-heading phi-collection-heading--category">
         <span class="phi-collection-heading__label" data-i18n="folder.information">FOLDER_INFORMATION</span>
-        <h1><%= cfg.title || categoryName %></h1>
+        <h1><%= cfg.name || cfg.title || categoryId %></h1>
         <p><%= posts.length %> FILES</p>
       </div>
       <div class="phi-collection-filelist">

@@ -15,7 +15,7 @@ menu:
 judgeline:
   enable: true
   color: "#38bdf8"
-  speed: 4          # 扫描周期，单位秒
+  speed: 4
 
 # 首页文章卡片
 index:
@@ -30,12 +30,13 @@ post:
 # 页脚
 footer:
   since: 2024
-  author: ""        # 留空则使用站点 author
+  author: ""
   powered_by: true
 
-# 字体（Saira 通过 Google Fonts 加载；中文使用 CJK fallback）
+# 字体：Saira 负责拉丁字母/UI；中文优先使用 Source Han Sans SC（思源黑体）
 fonts:
   enable: true
+
 # PhigrOS / D.O.M.E 视觉系统
 phigros:
   system_name: "PhigrOS"
@@ -50,87 +51,72 @@ background:
   grid: true
   grid_color: "57, 185, 232"
 
-# Saturn Virtual OS / FILE_CONTENT 文章界面
-# 每篇文章可在 Front Matter 单独覆盖这些值：
-# analysis: 50
-# supervisor: "deathMark"
-# category_label: "main"
-# folder_cover: "/images/xxx.jpg"
-# folder_title: "Transit Tide"
-# folder_subtitle: "Chapter VII"
-# folder_completion: 74
-# folder_items: 14
+# ==============================================================
+# Saturn Virtual OS / FILE_CONTENT
+#
+# Category ID（内部名）统一使用英文，例如：log / tutorial / creative。
+# 页面显示名称写在 name 中；title 用于 Folder 标题。
+# 文章 Front Matter 推荐：
+#
+# categories:
+#   - log
+#
+# 也兼容旧文章直接写“日志 / 教程 / 创作”，主题会自动映射到对应 ID。
+# ==============================================================
 saturn:
   analysis_default: 100
   supervisor_default: "D.O.M.E"
   category_default: "main"
-  # Category defaults for the article FOLDER_INFORMATION panel.
-  # Per-post folder.* values have higher priority.
-  # Built-in categories shown in /categories/.
-  # Their slugs are used only for these fixed visual folder routes.
-  core_categories:
-    - name: "日志"
-      slug: "log"
+
+  # 分类配置：键名是内部 Category ID，name 是对外显示名称。
+  categories:
+    log:
+      name: "日志"
       title: "日志"
       subtitle: "最直接的记录。"
       cover: "/images/home/log.jpg"
-    - name: "教程"
-      slug: "tutorial"
+      completion: 100
+
+    tutorial:
+      name: "教程"
       title: "教程"
       subtitle: "哈默尔恩的回响。"
       cover: "/images/home/tutorial.jpg"
-    - name: "创作"
-      slug: "creative"
+      completion: 100
+
+    creative:
+      name: "创作"
       title: "创作"
       subtitle: "你听见天使之乐了吗？"
       cover: "/images/home/creation.jpg"
-  # Default cover used by /categories/ when a category has no configured image.
-  # Put your image at: themes/phigros/source/images/category-default.jpg
-  category_fallback_cover: "/images/category-default.jpg"
-  category_folders:
-    日志:
-      title: "日志"
-      subtitle: "最直接的记录。"
-      cover: ""
       completion: 100
-    教程:
-      title: "教程"
-      subtitle: "哈默尔恩的回响。"
-      cover: ""
-      completion: 100
-    创作:
-      title: "创作"
-      subtitle: "你听见天使之乐了吗？"
-      cover: ""
-      completion: 100
+
+  # 不作为公开 Category 显示，仅用于没有分类时的默认 Folder 数据。
+  folder_defaults:
     main:
+      name: "MAIN"
       title: "MAIN"
       subtitle: "MAIN_STORY"
       cover: ""
       completion: 100
-    tutorial:
-      title: "TUTORIAL"
-      subtitle: "TUTORIAL"
-      cover: ""
-      completion: 100
-    creative:
-      title: "CREATIVE"
-      subtitle: "CREATIVE"
-      cover: ""
-      completion: 100
+
+  # /categories/ 中没有自定义图片时使用的默认封面。
+  category_fallback_cover: "/images/category-default.jpg"
 
 # 首页启动界面 / 内容配置
-# 图片请放在：themes/phigros/source/images/home/
 home:
   timeline_count: 6
   features:
-    - title: "日志"
+    - category: "log"
+      title: "日志"
       subtitle: "最直接的记录。"
       image: "/images/home/log.jpg"
-    - title: "教程"
+    - category: "tutorial"
+      title: "教程"
       subtitle: "哈默尔恩的回响。"
       image: "/images/home/tutorial.jpg"
-    - title: "创作"
+    - category: "creative"
+      title: "创作"
       subtitle: "你听见天使之乐了吗？"
       image: "/images/home/creation.jpg"
   misc:
@@ -143,8 +129,8 @@ home:
       email: "mailto:dmorest@foxmail.com"
     copyright_title: "PHATASiA LOTUS LAND"
     friends: []
+
 # Waline 评论系统
-# 评论服务部署在 Vercel，前端通过 CDN 加载 Waline Client。
 comments:
   enable: true
   waline:
@@ -152,7 +138,6 @@ comments:
     lang: "zh-CN"
     dark: true
     path: ""
-
 
 # 浏览器语言自动切换：zh-CN / ja / en
 localization:

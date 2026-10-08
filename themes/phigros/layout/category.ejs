@@ -1,6 +1,19 @@
 <%
-  var categoryFolders = (theme.saturn && theme.saturn.category_folders) || {};
-  var cfg = categoryFolders[page.category] || {};
+  var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};
+  function resolveCategoryId(value) {
+    var key = String(value == null ? '' : value).trim();
+    if (!key) return '';
+    if (categoryConfigs[key]) return key;
+    var found = '';
+    Object.keys(categoryConfigs).some(function(id) {
+      var cfg = categoryConfigs[id] || {};
+      if (String(cfg.name || '').trim() === key) { found = id; return true; }
+      return false;
+    });
+    return found || key;
+  }
+  var categoryId = resolveCategoryId(page.category);
+  var cfg = categoryConfigs[categoryId] || {};
 %>
 
 <div class="phi-collection-page phi-collection-page--category">
@@ -9,14 +22,12 @@
       <span class="phi-collection-tab">//COLLECTION</span>
       <span class="phi-collection-status" data-i18n="folder.content">FOLDER_CONTENT</span>
     </div>
-
     <div class="phi-collection-body">
       <div class="phi-collection-heading phi-collection-heading--category">
         <span class="phi-collection-heading__label" data-i18n="folder.information">FOLDER_INFORMATION</span>
-        <h1><%= cfg.title || page.category %></h1>
-        <p><%= cfg.subtitle || ('CATEGORY // ' + page.category) %> · <%= page.posts.length %> FILES</p>
+        <h1><%= cfg.name || cfg.title || categoryId || page.category %></h1>
+        <p><%= cfg.subtitle || ('CATEGORY // ' + (categoryId || page.category)) %> · <%= page.posts.length %> FILES</p>
       </div>
-
       <div class="phi-collection-filelist">
         <% page.posts.sort('date', -1).each(function(post, i) { %>
           <a class="phi-collection-file" href="<%- url_for(post.path) %>">
