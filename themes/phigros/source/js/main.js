@@ -401,30 +401,61 @@
   });
 })();
 
-// v8.2 — Mobile Saturn Folder drawer. The desktop two-column layout is
-// untouched; on small screens the folder becomes an off-canvas side panel.
+// v8.3 — Mobile Saturn Folder drawer.
 (function () {
   "use strict";
 
   var view = document.querySelector(".phi-file-view");
   var toggle = document.querySelector(".phi-folder-mobile-toggle");
   var panel = document.getElementById("phi-folder-panel");
+  var closeButton = document.querySelector(".phi-folder-mobile-close");
   if (!view || !toggle || !panel) return;
 
   var media = window.matchMedia ? window.matchMedia("(max-width: 780px)") : null;
+  var isMobile = function () { return !media || media.matches; };
+
   var setOpen = function (open) {
-    view.classList.toggle("is-folder-open", open);
+    view.classList.toggle("is-folder-open", !!open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    toggle.textContent = open ? "CLOSE" : "FOLDER";
+    toggle.setAttribute("aria-label", open ? "Close folder" : "Open folder");
+    toggle.textContent = "FOLDER";
+    if (closeButton) closeButton.hidden = !open;
   };
 
-  toggle.addEventListener("click", function () {
+  toggle.addEventListener("click", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     setOpen(!view.classList.contains("is-folder-open"));
   });
 
-  panel.addEventListener("click", function (event) {
-    var link = event.target.closest ? event.target.closest("a") : null;
-    if (link && media && media.matches) setOpen(false);
+  if (closeButton) {
+    closeButton.hidden = true;
+    closeButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(false);
+    });
+  }
+
+  // Bind directly to each folder item so navigation always collapses the drawer
+  // before the browser changes pages.
+  panel.querySelectorAll("a.phi-folder-item").forEach(function (link) {
+    link.addEventListener("click", function () {
+      if (isMobile()) setOpen(false);
+    }, true);
+  });
+
+  // Tapping outside the drawer closes it on mobile.
+  document.addEventListener("click", function (event) {
+    if (!isMobile() || !view.classList.contains("is-folder-open")) return;
+    if (panel.contains(event.target) || toggle.contains(event.target)) return;
+    setOpen(false);
+  }, true);
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && view.classList.contains("is-folder-open")) {
+      setOpen(false);
+    }
   });
 
   if (media) {

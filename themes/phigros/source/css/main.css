@@ -3398,12 +3398,10 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 }
 
 /* ============================================================
-   v8.2 — mobile folder drawer + chronological folder list
+   v8.3 — mobile folder drawer usability
    ============================================================ */
-
-/* On mobile the Folder INFORMATION panel becomes an off-canvas side drawer
-   instead of taking vertical space above FILE_CONTENT. */
-.phi-folder-mobile-toggle {
+.phi-folder-mobile-toggle,
+.phi-folder-mobile-close {
   display: none;
 }
 
@@ -3418,15 +3416,16 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
     display: grid;
     place-items: center;
     position: fixed;
-    z-index: 90;
+    z-index: 120;
     left: 0;
     top: 50%;
-    width: 32px;
-    height: 76px;
-    margin-top: -38px;
+    width: 34px;
+    height: 82px;
+    margin-top: -41px;
     padding: 0;
-    border: 1px solid rgba(57,185,232,.35);
+    border: 1px solid rgba(57,185,232,.42);
     border-left: 0;
+    border-radius: 0;
     background: #12232b;
     color: #d9f2f7;
     font: 600 9px/1 var(--phi-mono);
@@ -3434,22 +3433,22 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
     writing-mode: vertical-rl;
     text-orientation: mixed;
     cursor: pointer;
-    box-shadow: 4px 0 18px rgba(0,0,0,.28);
+    box-shadow: 4px 0 18px rgba(0,0,0,.34);
   }
 
   .phi-folder-panel {
     position: fixed;
-    z-index: 89;
+    z-index: 119;
     left: 0;
-    top: 12px;
-    bottom: 12px;
-    width: min(250px, calc(100vw - 32px));
-    max-height: calc(100dvh - 24px);
+    top: 10px;
+    bottom: 10px;
+    width: min(270px, calc(100vw - 28px));
+    max-height: calc(100dvh - 20px);
     overflow-x: hidden;
     overflow-y: auto;
     background: #0b1215 !important;
-    box-shadow: 12px 0 32px rgba(0,0,0,.42);
-    transform: translateX(calc(-100% - 8px));
+    box-shadow: 12px 0 32px rgba(0,0,0,.48);
+    transform: translateX(calc(-100% - 12px));
     transition: transform .28s cubic-bezier(.2,.75,.25,1);
     overscroll-behavior: contain;
   }
@@ -3458,10 +3457,47 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
     transform: translateX(0);
   }
 
-  .phi-file-view.is-folder-open .phi-folder-mobile-toggle {
-    left: min(250px, calc(100vw - 32px));
+  .phi-folder-mobile-close {
+    position: sticky;
+    z-index: 125;
+    top: 8px;
+    float: right;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    margin: 0 8px -32px 0;
+    padding: 0;
+    border: 1px solid rgba(57,185,232,.50);
+    border-radius: 0;
+    background: rgba(22,136,193,.96);
     color: #fff;
+    font: 400 24px/1 "Saira", sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.28);
+  }
+
+  .phi-folder-mobile-close[hidden] {
+    display: none;
+  }
+
+  .phi-file-view.is-folder-open .phi-folder-mobile-toggle {
+    left: 0;
+    top: auto;
+    bottom: 18px;
+    width: 34px;
+    height: 34px;
+    margin-top: 0;
+    writing-mode: horizontal-tb;
     background: #1688c1;
+    color: #fff;
+    font-size: 0;
+    border-color: rgba(255,255,255,.32);
+  }
+
+  .phi-file-view.is-folder-open .phi-folder-mobile-toggle::before {
+    content: "×";
+    font: 400 25px/1 "Saira", sans-serif;
   }
 
   .phi-folder-list {
