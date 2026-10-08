@@ -69,16 +69,15 @@
   /* A categorized article uses that category's cover by default. */
   var folderCover = folderConfig.cover || page.folder_cover || selectedCategoryConfig.cover || selectedFolderDefault.cover || page.cover || page.thumbnail || '';
   var explicitFolderPosts = Array.isArray(folderConfig.posts) ? folderConfig.posts : (Array.isArray(page.folder_posts) ? page.folder_posts : null);
-  var related = [];
-  var relatedPool = [];
+  var folderEntries = [];
   var hasUsableCategory = !!primaryCategory;
 
+  /* The folder list is a real chronological list. The current post is not
+     artificially pinned to the top; its position is determined by date. */
   site.posts.sort('date', -1).each(function(p) {
-    if (p.path === page.path) return;
-
     if (explicitFolderPosts) {
       var match = explicitFolderPosts.indexOf(p.slug) !== -1 || explicitFolderPosts.indexOf(p.path) !== -1 || explicitFolderPosts.indexOf(p.title) !== -1;
-      if (match) relatedPool.push(p);
+      if (match) folderEntries.push(p);
       return;
     }
 
@@ -89,20 +88,37 @@
         if (resolveCategoryId(cat.name) === folderCategory) sameCategory = true;
       });
       if (!sameCategory) return;
+      folderEntries.push(p);
+      return;
     }
-    relatedPool.push(p);
   });
 
-  if (!hasUsableCategory && !explicitFolderPosts) relatedPool = [];
-  var folderItemsDefault = relatedPool.length + 1;
+  /* Uncategorized articles keep a one-item folder. Explicit folders always
+     retain the current article even when folder.posts omitted it. */
+  if (!hasUsableCategory && !explicitFolderPosts) {
+    folderEntries = [page];
+  } else if (explicitFolderPosts && !folderEntries.some(function(p) { return p.path === page.path; })) {
+    folderEntries.push(page);
+  }
+
+  folderEntries.sort(function(a, b) {
+    var ad = new Date(a.date || 0).getTime();
+    var bd = new Date(b.date || 0).getTime();
+    return bd - ad;
+  });
+
+  /* Keep the compact folder UI at a maximum of 10 visible entries. */
+  folderEntries = folderEntries.slice(0, 10);
+
+  var folderItemsDefault = folderEntries.length;
   var folderItems = Number(folderConfig.items != null ? folderConfig.items : (page.folder_items != null ? page.folder_items : (selectedCategoryConfig.items != null ? selectedCategoryConfig.items : selectedFolderDefault.items)));
-  if (!isFinite(folderItems)) folderItems = folderItemsDefault;
+  if (!isFinite(folderItems)) folderItems = folderItemsDefault || 1;
   folderItems = Math.max(1, folderItems);
-  relatedPool.slice(0, 9).forEach(function(p) { related.push(p); });
 %>
 
 <article class="phi-file-view<%= commentsEnabled ? "" : " is-comments-closed" %>">
-  <aside class="phi-folder-panel">
+  <button class="phi-folder-mobile-toggle" type="button" aria-expanded="false" aria-controls="phi-folder-panel">FOLDER</button>
+  <aside class="phi-folder-panel" id="phi-folder-panel">
     <div class="phi-folder-head" data-i18n="folder.information">FOLDER_INFORMATION</div>
 
     <div class="phi-folder-cover<%= folderCover ? '' : ' is-empty' %>">
@@ -119,18 +135,15 @@
 
     <div class="phi-folder-section" data-i18n="folder.section">CONTENT</div>
     <nav class="phi-folder-list" aria-label="Folder contents">
-      <a class="phi-folder-item is-current" href="<%- url_for(page.path) %>">
-        <span><%= page.title %></span>
-      </a>
-      <% related.forEach(function(item) { %>
-        <a class="phi-folder-item" href="<%- url_for(item.path) %>">
+      <% folderEntries.forEach(function(item) { %>
+        <a class="phi-folder-item<%= item.path === page.path ? ' is-current' : '' %>" href="<%- url_for(item.path) %>">
           <span><%= item.title %></span>
         </a>
       <% }); %>
     </nav>
 
     <div class="phi-folder-footer">
-      <span><%= Math.min(folderItems, related.length + 1) %>/<%= folderItems %></span>
+      <span><%= Math.min(folderItems, folderEntries.length) %>/<%= folderItems %></span>
       <a href="#" data-phi-back>&lt; <span>BACK</span></a>
     </div>
   </aside>

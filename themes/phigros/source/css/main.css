@@ -3396,3 +3396,89 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
   letter-spacing: .12em;
   text-transform: uppercase;
 }
+
+/* ============================================================
+   v8.2 — mobile folder drawer + chronological folder list
+   ============================================================ */
+
+/* On mobile the Folder INFORMATION panel becomes an off-canvas side drawer
+   instead of taking vertical space above FILE_CONTENT. */
+.phi-folder-mobile-toggle {
+  display: none;
+}
+
+@media (max-width: 780px) {
+  .phi-file-view {
+    display: block;
+    width: min(100%, 1080px);
+    position: relative;
+  }
+
+  .phi-folder-mobile-toggle {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    z-index: 90;
+    left: 0;
+    top: 50%;
+    width: 32px;
+    height: 76px;
+    margin-top: -38px;
+    padding: 0;
+    border: 1px solid rgba(57,185,232,.35);
+    border-left: 0;
+    background: #12232b;
+    color: #d9f2f7;
+    font: 600 9px/1 var(--phi-mono);
+    letter-spacing: .09em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    cursor: pointer;
+    box-shadow: 4px 0 18px rgba(0,0,0,.28);
+  }
+
+  .phi-folder-panel {
+    position: fixed;
+    z-index: 89;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: min(250px, calc(100vw - 32px));
+    max-height: calc(100dvh - 24px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: #0b1215 !important;
+    box-shadow: 12px 0 32px rgba(0,0,0,.42);
+    transform: translateX(calc(-100% - 8px));
+    transition: transform .28s cubic-bezier(.2,.75,.25,1);
+    overscroll-behavior: contain;
+  }
+
+  .phi-file-view.is-folder-open .phi-folder-panel {
+    transform: translateX(0);
+  }
+
+  .phi-file-view.is-folder-open .phi-folder-mobile-toggle {
+    left: min(250px, calc(100vw - 32px));
+    color: #fff;
+    background: #1688c1;
+  }
+
+  .phi-folder-list {
+    display: block;
+  }
+
+  .phi-folder-item {
+    min-height: 38px;
+  }
+
+  .phi-folder-footer {
+    padding-bottom: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phi-folder-panel {
+    transition: none !important;
+  }
+}

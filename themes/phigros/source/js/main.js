@@ -400,3 +400,38 @@
     });
   });
 })();
+
+// v8.2 — Mobile Saturn Folder drawer. The desktop two-column layout is
+// untouched; on small screens the folder becomes an off-canvas side panel.
+(function () {
+  "use strict";
+
+  var view = document.querySelector(".phi-file-view");
+  var toggle = document.querySelector(".phi-folder-mobile-toggle");
+  var panel = document.getElementById("phi-folder-panel");
+  if (!view || !toggle || !panel) return;
+
+  var media = window.matchMedia ? window.matchMedia("(max-width: 780px)") : null;
+  var setOpen = function (open) {
+    view.classList.toggle("is-folder-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.textContent = open ? "CLOSE" : "FOLDER";
+  };
+
+  toggle.addEventListener("click", function () {
+    setOpen(!view.classList.contains("is-folder-open"));
+  });
+
+  panel.addEventListener("click", function (event) {
+    var link = event.target.closest ? event.target.closest("a") : null;
+    if (link && media && media.matches) setOpen(false);
+  });
+
+  if (media) {
+    var sync = function () { if (!media.matches) setOpen(false); };
+    if (media.addEventListener) media.addEventListener("change", sync);
+    else if (media.addListener) media.addListener(sync);
+  }
+
+  setOpen(false);
+})();
