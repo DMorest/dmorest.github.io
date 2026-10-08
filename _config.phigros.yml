@@ -34,8 +34,34 @@ saturn:
   analysis_default: 100
   supervisor_default: D.O.M.E
   category_default: main
-  core_categories: []
+  categories:
+    log:
+      name: 日志
+      title: 日志
+      subtitle: 最直接的记录。
+      cover: /images/home/log.jpg
+      completion: 100
+    tutorial:
+      name: 教程
+      title: 教程
+      subtitle: 哈默尔恩的回响。
+      cover: /images/home/tutorial.jpg
+      completion: 100
+    creative:
+      name: 创作
+      title: 创作
+      subtitle: 你听见天使之乐了吗？
+      cover: /images/home/creation.jpg
+      completion: 100
+  folder_defaults:
+    main:
+      name: MAIN
+      title: MAIN
+      subtitle: MAIN_STORY
+      cover: ''
+      completion: 100
   category_fallback_cover: /images/category-default.jpg
+  core_categories: []
   category_folders:
     日志:
       title: 日志
