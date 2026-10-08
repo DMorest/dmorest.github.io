@@ -95,7 +95,9 @@ home:
       x: https://x.com/dmorest0609
       email: mailto:dmorest@foxmail.com
     copyright_title: PHATASiA LOTUS LAND
-    friends: []
+    friends:
+      - name: MIST IDEA
+        url: im.mist-idea.cn
     author_url: ''
 comments:
   enable: true
