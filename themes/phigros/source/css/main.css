@@ -955,9 +955,15 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .phi-file-view {
     transform: none !important;
     transition: none;
+    will-change: auto;
   }
 
+  /* The mobile drawer and scrim must escape the desktop gyro stacking context. */
   .phi-file-view .phi-folder-panel,
+  .phi-file-view .phi-file-panel {
+    will-change: auto;
+  }
+
   .phi-file-view .phi-file-panel {
     transform: none !important;
     transition: none;
@@ -3398,10 +3404,11 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 }
 
 /* ============================================================
-   v8.3 — mobile folder drawer usability
+   v8.6 — mobile folder drawer: viewport-level scrim and explicit close
    ============================================================ */
 .phi-folder-mobile-toggle,
-.phi-folder-mobile-close {
+.phi-folder-mobile-close,
+.phi-folder-mobile-scrim {
   display: none;
 }
 
@@ -3410,18 +3417,45 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
     display: block;
     width: min(100%, 1080px);
     position: relative;
+    will-change: auto;
+  }
+
+  .phi-file-view .phi-folder-panel {
+    will-change: auto;
+  }
+
+  /* This is a real viewport-level layer. It is intentionally not hidden;
+     JS only changes opacity/pointer-events through .is-folder-open. */
+  .phi-folder-mobile-scrim {
+    display: block;
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: rgba(0,0,0,.58);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    transition: opacity .22s ease;
+    appearance: none;
+    -webkit-appearance: none;
   }
 
   .phi-folder-mobile-toggle {
     display: grid;
     place-items: center;
     position: fixed;
-    z-index: 120;
+    z-index: 10002;
     left: 0;
-    top: 50%;
+    top: 170px;
     width: 34px;
     height: 82px;
-    margin-top: -41px;
+    margin-top: 0;
     padding: 0;
     border: 1px solid rgba(57,185,232,.42);
     border-left: 0;
@@ -3438,7 +3472,7 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 
   .phi-folder-panel {
     position: fixed;
-    z-index: 119;
+    z-index: 10001;
     left: 0;
     top: 10px;
     bottom: 10px;
@@ -3446,58 +3480,67 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
     max-height: calc(100dvh - 20px);
     overflow-x: hidden;
     overflow-y: auto;
+    box-sizing: border-box;
+    padding-top: 0;
     background: #0b1215 !important;
-    box-shadow: 12px 0 32px rgba(0,0,0,.48);
-    transform: translateX(calc(-100% - 12px));
-    transition: transform .28s cubic-bezier(.2,.75,.25,1);
+    box-shadow: 12px 0 32px rgba(0,0,0,.58);
+    transform: translateX(calc(-100% - 18px));
+    transition: transform .22s cubic-bezier(.2,.75,.25,1);
     overscroll-behavior: contain;
+    isolation: isolate;
+    will-change: transform;
+  }
+
+  .phi-file-view.is-folder-open .phi-folder-mobile-scrim {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .phi-file-view.is-folder-open .phi-folder-panel {
     transform: translateX(0);
   }
 
-  .phi-folder-mobile-close {
-    position: sticky;
-    z-index: 125;
-    top: 8px;
-    float: right;
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    margin: 0 8px -32px 0;
-    padding: 0;
-    border: 1px solid rgba(57,185,232,.50);
-    border-radius: 0;
-    background: rgba(22,136,193,.96);
-    color: #fff;
-    font: 400 24px/1 "Saira", sans-serif;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0,0,0,.28);
+  /* The close control lives inside FOLDER_INFORMATION and remains a real
+     clickable control while the drawer is open. */
+  .phi-folder-head {
+    min-height: 31px;
+    box-sizing: border-box;
+    padding-right: 46px;
   }
 
-  .phi-folder-mobile-close[hidden] {
-    display: none;
+  .phi-folder-mobile-close {
+    position: absolute;
+    z-index: 10003;
+    top: 0;
+    right: 0;
+    display: grid !important;
+    place-items: center;
+    width: 40px;
+    height: 31px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid rgba(255,255,255,.32);
+    border-radius: 0;
+    background: rgba(0,0,0,.08);
+    color: #fff;
+    font: 400 24px/1 "Saira", "Source Han Sans", sans-serif;
+    cursor: pointer;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .phi-folder-mobile-close:hover,
+  .phi-folder-mobile-close:focus-visible {
+    background: rgba(0,0,0,.18);
+    outline: none;
   }
 
   .phi-file-view.is-folder-open .phi-folder-mobile-toggle {
-    left: 0;
-    top: auto;
-    bottom: 18px;
-    width: 34px;
-    height: 34px;
-    margin-top: 0;
-    writing-mode: horizontal-tb;
-    background: #1688c1;
-    color: #fff;
-    font-size: 0;
-    border-color: rgba(255,255,255,.32);
-  }
-
-  .phi-file-view.is-folder-open .phi-folder-mobile-toggle::before {
-    content: "×";
-    font: 400 25px/1 "Saira", sans-serif;
+    display: none;
   }
 
   .phi-folder-list {
@@ -3514,7 +3557,9 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .phi-folder-mobile-scrim,
   .phi-folder-panel {
     transition: none !important;
   }
 }
+

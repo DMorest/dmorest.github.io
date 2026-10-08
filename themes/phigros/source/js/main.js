@@ -401,7 +401,7 @@
   });
 })();
 
-// v8.3 — Mobile Saturn Folder drawer.
+// v8.5 — Mobile Saturn Folder drawer.
 (function () {
   "use strict";
 
@@ -409,6 +409,7 @@
   var toggle = document.querySelector(".phi-folder-mobile-toggle");
   var panel = document.getElementById("phi-folder-panel");
   var closeButton = document.querySelector(".phi-folder-mobile-close");
+  var scrim = document.querySelector(".phi-folder-mobile-scrim");
   if (!view || !toggle || !panel) return;
 
   var media = window.matchMedia ? window.matchMedia("(max-width: 780px)") : null;
@@ -419,7 +420,7 @@
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     toggle.setAttribute("aria-label", open ? "Close folder" : "Open folder");
     toggle.textContent = "FOLDER";
-    if (closeButton) closeButton.hidden = !open;
+    if (closeButton) closeButton.setAttribute("aria-hidden", open ? "false" : "true");
   };
 
   toggle.addEventListener("click", function (event) {
@@ -429,12 +430,28 @@
   });
 
   if (closeButton) {
-    closeButton.hidden = true;
+    closeButton.setAttribute("aria-hidden", "true");
     closeButton.addEventListener("click", function (event) {
       event.preventDefault();
       event.stopPropagation();
       setOpen(false);
     });
+  }
+
+  // A real fixed scrim is used instead of relying on document-level click
+  // bubbling. This remains clickable even when another page element captures
+  // or stops propagation.
+  if (scrim) {
+    scrim.setAttribute("aria-hidden", "true");
+    var closeFromOutside = function (event) {
+      if (!isMobile() || !view.classList.contains("is-folder-open")) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(false);
+    };
+    scrim.addEventListener("click", closeFromOutside);
+    scrim.addEventListener("pointerup", closeFromOutside);
+    scrim.addEventListener("touchend", closeFromOutside, { passive: false });
   }
 
   // Bind directly to each folder item so navigation always collapses the drawer
@@ -444,13 +461,6 @@
       if (isMobile()) setOpen(false);
     }, true);
   });
-
-  // Tapping outside the drawer closes it on mobile.
-  document.addEventListener("click", function (event) {
-    if (!isMobile() || !view.classList.contains("is-folder-open")) return;
-    if (panel.contains(event.target) || toggle.contains(event.target)) return;
-    setOpen(false);
-  }, true);
 
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && view.classList.contains("is-folder-open")) {
