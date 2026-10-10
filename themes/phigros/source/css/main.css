@@ -1652,9 +1652,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (max-width: 780px) {
-  .phi-home-fisheye { opacity: .48; }
-  .phi-network-base { stroke-width: .82 !important; }
-  .phi-network-glow { stroke-width: 1.10 !important; }
+  /* Keep the full animated triangle-network effect on mobile too. The previous
+     reduced opacity/thinner strokes made the moving glow look like cheap flicker. */
+  .phi-home-fisheye { opacity: .82; }
+  .phi-network-base { stroke-width: .92 !important; }
+  .phi-network-glow { stroke-width: 1.28 !important; }
 }
 
 /* v3.9 final correction: the homepage background is the triangle network only. */
@@ -3622,9 +3624,18 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 /* v0.91 — independent pin flags for folder, timeline and archive. */
 :root { --phi-pin-orange: #ff9b45; }
 .phi-folder-item.is-pinned { position: relative; }
-.phi-folder-item.is-pinned::after {
-  content: ""; position: absolute; right: 10px; top: 50%; width: 4px; height: 4px;
-  background: var(--phi-pin-orange); transform: translateY(-50%);
+/* Folder pins use a persistent left rail, matching the current-item indicator. */
+.phi-folder-item.is-pinned::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--phi-pin-orange); z-index: 1;
+}
+.phi-folder-item.is-pinned.is-current {
+  border-left: 4px solid var(--phi-pin-orange);
+  padding-left: 7px;
+}
+.phi-folder-item.is-pinned:hover,
+.phi-folder-item.is-pinned:focus-visible {
+  border-left-color: var(--phi-pin-orange);
 }
 .phi-timeline-item.is-pinned .phi-timeline-item__marker { color: var(--phi-pin-orange); }
 .phi-timeline-item.is-pinned .phi-timeline-item__marker span {
@@ -3644,3 +3655,13 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 }
 .phi-collection-group-label--pinned { margin-bottom: 0; color: var(--phi-pin-orange); }
 .phi-collection-group-label--pinned small { color: rgba(255,155,69,.72); }
+
+
+/* v0.91.2 — mobile-only final-screen spacing correction.
+   Move copyright slightly lower so it no longer collides visually with the counter.
+   Desktop positioning remains unchanged. */
+@media (max-width: 640px) {
+  body.is-home-page .phi-home-section--misc .phi-misc-copyright {
+    bottom: 0;
+  }
+}
