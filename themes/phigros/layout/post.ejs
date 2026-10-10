@@ -18,6 +18,15 @@
   var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};
   var folderDefaults = (theme.saturn && theme.saturn.folder_defaults) || {};
 
+  /* Pin flags support explicit front-matter fields and a compact nested form. */
+  function isPinEnabled(post, target) {
+    if (!post) return false;
+    var nested = post.pin && typeof post.pin === 'object' ? post.pin[target] : false;
+    var value = post['pin_' + target] != null ? post['pin_' + target] : nested;
+    if (value == null) return false;
+    return value === true || value === 1 || /^(true|1|yes|on)$/i.test(String(value).trim());
+  }
+
   /* Resolve both the new English internal ID and the legacy external name. */
   function resolveCategoryId(value) {
     var key = String(value == null ? '' : value).trim();
@@ -72,8 +81,8 @@
   var folderEntries = [];
   var hasUsableCategory = !!primaryCategory;
 
-  /* The folder list is a real chronological list. The current post is not
-     artificially pinned to the top; its position is determined by date. */
+  /* Collect folder entries first; pin_folder entries are ordered before the
+     remaining articles, with date order preserved inside each group. */
   site.posts.sort('date', -1).each(function(p) {
     if (explicitFolderPosts) {
       var match = explicitFolderPosts.indexOf(p.slug) !== -1 || explicitFolderPosts.indexOf(p.path) !== -1 || explicitFolderPosts.indexOf(p.title) !== -1;
@@ -102,6 +111,9 @@
   }
 
   folderEntries.sort(function(a, b) {
+    var ap = isPinEnabled(a, 'folder') ? 1 : 0;
+    var bp = isPinEnabled(b, 'folder') ? 1 : 0;
+    if (ap !== bp) return bp - ap;
     var ad = new Date(a.date || 0).getTime();
     var bd = new Date(b.date || 0).getTime();
     return bd - ad;
@@ -140,7 +152,7 @@
     <div class="phi-folder-section" data-i18n="folder.section">CONTENT</div>
     <nav class="phi-folder-list" aria-label="Folder contents">
       <% folderEntries.forEach(function(item) { %>
-        <a class="phi-folder-item<%= item.path === page.path ? ' is-current' : '' %>" href="<%- url_for(item.path) %>">
+        <a class="phi-folder-item<%= item.path === page.path ? ' is-current' : '' %><%= isPinEnabled(item, 'folder') ? ' is-pinned' : '' %>" href="<%- url_for(item.path) %>">
           <span><%= item.title %></span>
         </a>
       <% }); %>

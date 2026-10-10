@@ -1,8 +1,17 @@
 <%
   var posts = page.posts ? page.posts.toArray() : site.posts.toArray();
-  posts.sort(function(a, b) { return b.date - a.date; });
+  function isPinEnabled(post, target) {
+    if (!post) return false;
+    var nested = post.pin && typeof post.pin === 'object' ? post.pin[target] : false;
+    var value = post['pin_' + target] != null ? post['pin_' + target] : nested;
+    if (value == null) return false;
+    return value === true || value === 1 || /^(true|1|yes|on)$/i.test(String(value).trim());
+  }
+  posts.sort(function(a, b) { return new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime(); });
+  var pinnedPosts = posts.filter(function(post) { return isPinEnabled(post, 'archive'); });
+  var regularPosts = posts.filter(function(post) { return !isPinEnabled(post, 'archive'); });
   var years = {};
-  posts.forEach(function(post) {
+  regularPosts.forEach(function(post) {
     var y = post.date.year();
     if (!years[y]) years[y] = [];
     years[y].push(post);
@@ -18,6 +27,20 @@
 
     <div class="phi-collection-body">
       <div class="phi-collection-filelist phi-collection-filelist--archive">
+        <% if (pinnedPosts.length) { %>
+          <div class="phi-collection-group-label phi-collection-group-label--pinned">
+            <span>// PINNED FILES</span>
+            <small><%= pinnedPosts.length %> PINNED</small>
+          </div>
+          <% pinnedPosts.forEach(function(post, i) { %>
+            <a class="phi-collection-file is-pinned" href="<%- url_for(post.path) %>">
+              <span class="phi-collection-file__index"><%= String(i + 1).padStart(2, '0') %></span>
+              <span class="phi-collection-file__date"><%= date(post.date, 'MM.DD') %></span>
+              <span class="phi-collection-file__title"><%= post.title %></span>
+              <span class="phi-collection-file__arrow">›</span>
+            </a>
+          <% }); %>
+        <% } %>
         <% Object.keys(years).sort().reverse().forEach(function(year) { %>
           <div class="phi-collection-group-label">
             <span><%= year %></span>

@@ -11,10 +11,22 @@
   var misc = homeConfig.misc || {};
   var friendSites = Array.isArray(misc.friends) ? misc.friends : [];
 
-  var timelinePosts = [];
-  site.posts.sort('date', -1).each(function (post) {
-    if (timelinePosts.length < timelineCount) timelinePosts.push(post);
+  function isPinEnabled(post, target) {
+    if (!post) return false;
+    var nested = post.pin && typeof post.pin === 'object' ? post.pin[target] : false;
+    var value = post['pin_' + target] != null ? post['pin_' + target] : nested;
+    if (value == null) return false;
+    return value === true || value === 1 || /^(true|1|yes|on)$/i.test(String(value).trim());
+  }
+
+  var timelinePosts = site.posts.toArray();
+  timelinePosts.sort(function(a, b) {
+    var ap = isPinEnabled(a, 'timeline') ? 1 : 0;
+    var bp = isPinEnabled(b, 'timeline') ? 1 : 0;
+    if (ap !== bp) return bp - ap;
+    return new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime();
   });
+  timelinePosts = timelinePosts.slice(0, timelineCount);
 
   var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};
   function resolveCategoryId(value) {
@@ -136,7 +148,7 @@
       </div>
       <div class="phi-timeline">
         <% timelinePosts.forEach(function(post, index) { %>
-          <a class="phi-timeline-item" href="<%- url_for(post.path) %>">
+          <a class="phi-timeline-item<%= isPinEnabled(post, 'timeline') ? ' is-pinned' : '' %>" href="<%- url_for(post.path) %>">
             <div class="phi-timeline-item__marker"><span><%= String(index + 1).padStart(2, '0') %></span></div>
             <div class="phi-timeline-item__date"><%= date(post.date, 'YYYY.MM.DD') %></div>
             <div class="phi-timeline-item__body">

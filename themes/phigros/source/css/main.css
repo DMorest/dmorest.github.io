@@ -3617,3 +3617,30 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 }
 
 .phi-visitor-tracker { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; opacity: 0 !important; pointer-events: none !important; }
+
+
+/* v0.91 — independent pin flags for folder, timeline and archive. */
+:root { --phi-pin-orange: #ff9b45; }
+.phi-folder-item.is-pinned { position: relative; }
+.phi-folder-item.is-pinned::after {
+  content: ""; position: absolute; right: 10px; top: 50%; width: 4px; height: 4px;
+  background: var(--phi-pin-orange); transform: translateY(-50%);
+}
+.phi-timeline-item.is-pinned .phi-timeline-item__marker { color: var(--phi-pin-orange); }
+.phi-timeline-item.is-pinned .phi-timeline-item__marker span {
+  color: var(--phi-pin-orange); border-color: rgba(255,155,69,.7);
+}
+.phi-collection-page--archive .phi-collection-file.is-pinned { position: relative; }
+.phi-collection-page--archive .phi-collection-file.is-pinned::before {
+  content: ""; position: absolute; left: 0; top: 50%; width: 3px; height: 20px;
+  transform: translateY(-50%); background: var(--phi-pin-orange);
+}
+.phi-collection-page--archive .phi-collection-file.is-pinned .phi-collection-file__index {
+  color: var(--phi-pin-orange); border-color: rgba(255,155,69,.72);
+}
+.phi-collection-page--archive .phi-collection-file.is-pinned:hover .phi-collection-file__index,
+.phi-collection-page--archive .phi-collection-file.is-pinned:focus-visible .phi-collection-file__index {
+  color: #ffb36c; border-color: var(--phi-pin-orange);
+}
+.phi-collection-group-label--pinned { margin-bottom: 0; color: var(--phi-pin-orange); }
+.phi-collection-group-label--pinned small { color: rgba(255,155,69,.72); }
