@@ -1,5 +1,5 @@
 <%
-  var excerpt = post.excerpt ? strip_html(post.excerpt) : strip_html(post.content || '');
+  var excerpt = post.access_key ? '' : (post.excerpt ? strip_html(post.excerpt) : strip_html(post.content || ''));
   var maxLen = (theme.index && theme.index.excerpt_length) || 140;
   if (excerpt.length > maxLen) excerpt = excerpt.substring(0, maxLen) + '…';
   var categoryConfigs = (theme.saturn && theme.saturn.categories) || {};

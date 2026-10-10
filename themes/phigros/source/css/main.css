@@ -5,6 +5,10 @@
    ============================================================ */
 
 @import url("https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap");
+/* Requested Kazesawa web font (with fallback if the family is not served by Google Fonts). */
+@import url("https://fonts.googleapis.com/css2?family=Kazesawa&display=swap");
+/* Kazesawa is not listed in Google Fonts; use this hosted Regular build as fallback. */
+@import url("https://db.onlinewebfonts.com/c/b85f678950eba846585d822cd2a6db79?family=Kazesawa+Regular");
 
 /* Prefer the bundled Phigros font (Chinese/Japanese = Source Han,
    Latin = Saira). If it cannot be loaded, fall back to Google Fonts. */
@@ -1420,18 +1424,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 /* The top bar IS the analysis meter. There is no separate progress track. */
-.phi-file-topbar::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: 0 auto 0 0;
-  width: var(--analysis-progress);
-  pointer-events: none;
-  background: #1688c1;
-  box-shadow: inset -1px 0 rgba(224,247,255,.75);
-  transition: width .45s ease;
-}
-
 .phi-file-topbar::after {
   z-index: 0;
 }
@@ -1562,14 +1554,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 /* The top strip itself is the analysis meter: the completed area carries
    the subtle diagonal technical hatching seen in the reference. */
-.phi-file-topbar::before {
-  background:
-    repeating-linear-gradient(135deg,
-      rgba(255,255,255,.045) 0 2px,
-      rgba(255,255,255,0) 2px 7px),
-    #1688c1;
-}
-
 /* The status is one compact label, not a second percentage readout. */
 .phi-analysis-status {
   gap: 0;
@@ -1677,18 +1661,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 /* The completed portion is a flat #315472 field with hatching only
    inside the completed area. At 0% this layer has zero width, so there
    is no hatch at all. */
-.phi-file-topbar::before {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,.07) 0 2px,
-      rgba(255,255,255,0) 2px 7px
-    ),
-    #315472;
-  box-shadow: inset -3px 0 rgba(226, 241, 246, .76);
-  transition: width .45s ease;
-}
-
 /* Keep the original FILE_CONTENT arrow tag color and height. */
 .phi-file-tab {
   height: 36px;
@@ -3722,3 +3694,689 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
   line-height: 1.2;
 }
 .phi-collection-group-label small { line-height: 1.2; }
+
+/* ==========================================================
+   ACCESS KEY GATE — PhigrOS security interface (v0.92.2)
+   ========================================================== */
+.phi-access-protected { padding-top: 26px; }
+.phi-access-gate { position: relative; isolation: isolate; max-width: 850px; margin: 0 auto; padding: 28px 5.5% 42px; text-align: center; overflow: hidden; }
+/* Keep the side ornaments out of the gate: the warning and hazard line are enough. */
+.phi-access-gate::before, .phi-access-gate::after { display: none !important; content: none !important; }
+.phi-access-warning { width: 54px; height: 50px; margin: 0 auto 14px; position: relative; display: grid; place-items: center; color: #ff1721; filter: drop-shadow(0 0 9px rgba(255,0,20,.7)); }
+.phi-access-warning svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.phi-access-stripes { height: 3px; margin: 0 -7% 22px; opacity: .95; background: #ff101b; transform: none; box-shadow: 0 0 12px rgba(255,0,20,.45); position: relative; }
+.phi-access-stripes::after { content: ""; position: absolute; inset: -6px 0; background: repeating-linear-gradient(135deg, rgba(255,0,20,.85) 0 10px, transparent 10px 24px); opacity: .16; }
+.phi-access-title { margin: 0 0 4px !important; padding: 0 !important; border: 0 !important; color: #ff111b !important; font-family: "Saira", "Cascadia Mono", Consolas, monospace !important; font-size: clamp(32px, 5.4vw, 54px) !important; font-weight: 700 !important; letter-spacing: .035em !important; line-height: 1.12; transform: scaleX(.86); text-shadow: 0 0 3px #ff101b, 0 0 13px rgba(255,0,20,.7); }
+.phi-access-title::before { display: none !important; }
+.phi-access-description { margin: 0 auto 42px !important; padding: 0 !important; border: 0 !important; color: rgba(255,128,132,.92); font: 500 13px/1.6 "Saira", "Noto Sans SC", sans-serif; letter-spacing: .06em; text-shadow: 0 0 8px rgba(255,0,20,.35); }
+.phi-access-description::before { display: none !important; }
+.phi-access-form { width: min(100%, 740px); margin: 0 auto; text-align: left; position: relative; }
+.phi-access-passcode { display: flex; align-items: center; gap: 8px; width: 100%; height: 54px; box-sizing: border-box; padding: 5px 7px 5px 17px; background: #f0000b; clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 20px 100%, 0 50%); box-shadow: 0 0 16px rgba(255,0,20,.3); }
+.phi-access-input { flex: 1; min-width: 0; width: 100%; height: 100%; box-sizing: border-box; padding: 0 12px; border: 0; border-radius: 0; outline: none; background: transparent; color: #160708; font: 800 15px/1 "Saira", "Cascadia Mono", Consolas, monospace; text-align: center; box-shadow: none; }
+.phi-access-input::placeholder { color: rgba(32,0,0,.78); text-transform: uppercase; opacity: 1; }
+.phi-access-input:focus { background: rgba(255,255,255,.08); box-shadow: none; }
+.phi-access-submit { flex: 0 0 42px; width: 42px; height: 42px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 0; background: #090a0c; color: #ff111b; font: 800 31px/1 "Saira", monospace; cursor: pointer; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); }
+.phi-access-submit span { display: block; transform: translateX(1px); }
+.phi-access-submit:hover, .phi-access-submit:focus-visible { background: #fff; color: #08090a; }
+.phi-access-gate[hidden], .phi-access-modal[hidden], .phi-access-unlocked[hidden] { display: none !important; }
+.phi-access-modal { position: fixed; z-index: 99999; inset: 0; display: grid; place-items: center; padding: 22px; }
+.phi-access-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.78); backdrop-filter: blur(5px); }
+.phi-access-modal__panel { position: relative; width: min(100%, 430px); margin: 0; padding: 0 24px 22px; border: 1px solid rgba(255,77,83,.75); background: #101315; color: #e6e9e9; text-align: center; box-shadow: 0 0 30px rgba(255,35,43,.16), 8px 8px 0 rgba(75,14,18,.4); }
+.phi-access-modal__hazard { height: 12px; margin: 0 -24px 20px; background: repeating-linear-gradient(135deg, #a82d34 0 10px, #25191b 10px 20px); }
+.phi-access-modal__panel h3 { margin: 0 0 18px; color: #ff5b62; font: 700 23px/1.3 "Saira", "Noto Sans SC", sans-serif; letter-spacing: .12em; }
+.phi-access-modal__panel p { margin: 0 0 22px; color: #d9dfe0; }
+.phi-access-modal__panel button { min-width: 142px; min-height: 44px; padding: 10px 28px; border: 0; border-radius: 0; background: #f4f5f5; color: #080a0b; font: 700 14px/1 "Saira", "Noto Sans SC", sans-serif; letter-spacing: .06em; cursor: pointer; clip-path: polygon(12% 0, 88% 0, 100% 50%, 88% 100%, 12% 100%, 0 50%); }
+.phi-access-modal__panel button:hover, .phi-access-modal__panel button:focus-visible { background: #fff; color: #000; filter: drop-shadow(0 0 5px rgba(255,255,255,.25)); }
+.phi-comments[hidden] { display: none !important; }
+.phi-access-unlocked { min-height: 20px; }
+@media (max-width: 640px) {
+  .phi-access-protected { padding: 20px 18px 34px; }
+  .phi-access-gate { padding: 24px 2% 30px; }
+  .phi-access-gate::before, .phi-access-gate::after { width: 22px; height: 90px; top: 20%; }
+  .phi-access-title { font-size: clamp(28px, 8vw, 42px) !important; }
+  .phi-access-description { margin-bottom: 30px !important; font-size: 11px; }
+  .phi-access-stripes { margin-bottom: 18px; }
+  .phi-access-passcode { height: 46px; padding: 4px 6px 4px 13px; gap: 4px; }
+  .phi-access-input { padding: 0 7px; font-size: 13px; }
+  .phi-access-submit { flex-basis: 36px; width: 36px; height: 36px; font-size: 23px; }
+  .phi-access-modal { padding: 18px; }
+  .phi-access-modal__panel { width: min(100%, 360px); }
+}
+
+
+/* ============================================================
+   v0.92.6 — ACCESS GATE ALIGNMENT + FLASH-FREE RESTORE
+   ============================================================ */
+/* Restore the regular status label layout after decryption. */
+.phi-file-topbar:not(.is-access-protected) .phi-analysis-status {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.phi-file-topbar:not(.is-access-protected) .phi-analysis-status > span {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+/* A single continuous red passcode bar with a properly aligned outlined
+   hexagonal action key. The SVG arrow is intentionally geometric, not a font glyph. */
+.phi-access-passcode {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 54px;
+  padding: 4px 48px 4px 17px;
+  gap: 0;
+  overflow: visible;
+  clip-path: none;
+  background: #f0000b;
+  box-shadow: 0 0 16px rgba(255,0,20,.3);
+}
+.phi-access-passcode::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: #f0000b;
+  clip-path: polygon(20px 0, 100% 0, calc(100% - 20px) 100%, 20px 100%, 0 50%);
+  pointer-events: none;
+}
+.phi-access-input {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+.phi-access-submit {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: -3px;
+  transform: translateY(-50%);
+  flex: none;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  border: 0;
+  background: #ff101b;
+  color: #ff101b;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  cursor: pointer;
+}
+.phi-access-submit::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #080a0c;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+.phi-access-submit svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 29px;
+  height: 22px;
+  color: #ff101b;
+  transition: transform .15s ease;
+}
+.phi-access-submit:hover svg, .phi-access-submit:focus-visible svg { transform: translateX(2px); }
+.phi-access-submit:hover, .phi-access-submit:focus-visible { background: #080a0c; color: #080a0c; }
+@media (max-width: 640px) {
+  .phi-access-passcode { height: 46px; padding: 4px 40px 4px 13px; }
+  .phi-access-submit { width: 48px; height: 48px; right: -2px; }
+  .phi-access-submit svg { width: 24px; height: 19px; }
+}
+
+
+/* ============================================================
+   v0.92.7 — ACCESS GATE FINAL SHAPE / TOPBAR RESTORE
+   ============================================================ */
+/* Lift the warning icon a little so it has clear breathing room above the hazard line. */
+.phi-access-warning { transform: translateY(-6px); margin-bottom: 14px; }
+
+/* Restore the complete six-sided passcode bar; both ends are angled. */
+.phi-access-passcode {
+  height: 54px;
+  padding: 4px 42px 4px 17px;
+  overflow: visible;
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 20px 100%, 0 50%);
+  background: #f0000b;
+  box-shadow: 0 0 16px rgba(255,0,20,.3);
+}
+.phi-access-passcode::before {
+  inset: 0;
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 20px 100%, 0 50%);
+  background: #f0000b;
+}
+.phi-access-input { padding: 0 12px; background: transparent !important; transition: none !important; }
+.phi-access-input:focus, .phi-access-input:active { background: transparent !important; box-shadow: none !important; outline: none !important; }
+
+/* Slightly smaller inset hex key, with a compact, bold right arrow inspired by the game UI. */
+.phi-access-submit {
+  right: 0;
+  width: 46px;
+  height: 46px;
+  background: #ff101b;
+  color: #ff101b;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  transition: none !important;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  outline: none !important;
+}
+.phi-access-submit::before {
+  inset: 2px;
+  background: #080a0c;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+.phi-access-submit svg {
+  width: 25px;
+  height: 20px;
+  color: #ff101b;
+  transition: none !important;
+  transform: none !important;
+}
+/* Filled angular arrow: no font glyph, no hover/pressed animation or color change. */
+.phi-access-submit svg path {
+  d: path("M3 10H18V4L29 12L18 20V14H3Z");
+  fill: currentColor;
+  stroke: none;
+  stroke-linejoin: miter;
+}
+.phi-access-submit:hover,
+.phi-access-submit:focus,
+.phi-access-submit:focus-visible,
+.phi-access-submit:active {
+  background: #ff101b !important;
+  color: #ff101b !important;
+  filter: none !important;
+  transform: translateY(-50%) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.phi-access-submit:hover svg,
+.phi-access-submit:focus svg,
+.phi-access-submit:focus-visible svg,
+.phi-access-submit:active svg { transform: none !important; }
+@media (max-width: 640px) {
+  .phi-access-passcode { height: 46px; padding: 4px 35px 4px 13px; }
+  .phi-access-submit { width: 38px; height: 38px; right: 0; }
+  .phi-access-submit svg { width: 21px; height: 17px; }
+}
+
+/* Ensure the unlocked status text has its own flex space and is never clipped
+   behind the arrow-shaped FILE_CONTENT tab. */
+.phi-file-topbar:not(.is-access-protected) { display: flex; align-items: stretch; }
+.phi-file-topbar:not(.is-access-protected) .phi-file-tab { flex: 0 0 auto; z-index: 2; }
+.phi-file-topbar:not(.is-access-protected) .phi-analysis-status {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  padding: 0 16px;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+.phi-file-topbar:not(.is-access-protected) .phi-analysis-status > span {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+@media (max-width: 780px) {
+  .phi-file-topbar:not(.is-access-protected) .phi-analysis-status { padding: 0 10px; }
+}
+
+/* ============================================================
+   v0.92.8 — deterministic unlock status + reference-matched passcode key
+   ============================================================ */
+/* After successful decryption, explicitly restore the normal progress fill.
+   The lock selector intentionally forces it to zero only while still locked. */
+.phi-file-topbar:not(.is-access-protected) .phi-analysis-status {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+  padding-left: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.phi-file-topbar:not(.is-access-protected) .phi-analysis-status > span {
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1 !important;
+}
+
+/* The passcode bar has matching diagonal cuts on all four corners. */
+.phi-access-passcode {
+  height: 54px !important;
+  padding: 4px 43px 4px 20px !important;
+  clip-path: none !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+.phi-access-passcode::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 0 !important;
+  background: #f0000b !important;
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 20px 100%, 0 50%) !important;
+  pointer-events: none !important;
+}
+.phi-access-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  padding: 0 10px !important;
+  text-align: center !important;
+  background: transparent !important;
+  transition: none !important;
+}
+.phi-access-input:hover,
+.phi-access-input:focus,
+.phi-access-input:active {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Red hexagonal outline and inset dark face follow the same parallel slants
+   as the game reference; the icon is a simple straight-shaft arrow. */
+.phi-access-submit {
+  position: absolute !important;
+  z-index: 3 !important;
+  top: 50% !important;
+  right: -2px !important;
+  width: 46px !important;
+  height: 46px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  transform: translateY(-50%) !important;
+  clip-path: polygon(17px 0, calc(100% - 17px) 0, 100% 50%, calc(100% - 17px) 100%, 17px 100%, 0 50%) !important;
+  background: #ff101b !important;
+  color: #ff101b !important;
+  box-shadow: none !important;
+  transition: none !important;
+  animation: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation;
+}
+.phi-access-submit::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 4px !important;
+  background: #080a0c !important;
+  clip-path: polygon(13px 0, calc(100% - 13px) 0, 100% 50%, calc(100% - 13px) 100%, 13px 100%, 0 50%) !important;
+}
+.phi-access-submit svg {
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: 25px !important;
+  height: 24px !important;
+  color: #ff101b !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+.phi-access-submit svg path {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 3.2 !important;
+  stroke-linecap: square !important;
+  stroke-linejoin: miter !important;
+}
+.phi-access-submit:hover,
+.phi-access-submit:focus,
+.phi-access-submit:focus-visible,
+.phi-access-submit:active,
+.phi-access-submit:disabled {
+  background: #ff101b !important;
+  color: #ff101b !important;
+  filter: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transform: translateY(-50%) !important;
+}
+.phi-access-submit:hover::before,
+.phi-access-submit:focus::before,
+.phi-access-submit:focus-visible::before,
+.phi-access-submit:active::before,
+.phi-access-submit:disabled::before { background: #080a0c !important; }
+.phi-access-submit:hover svg,
+.phi-access-submit:focus svg,
+.phi-access-submit:focus-visible svg,
+.phi-access-submit:active svg { transform: none !important; }
+@media (max-width: 640px) {
+  .phi-access-passcode { height: 46px !important; padding: 4px 36px 4px 13px !important; }
+  .phi-access-submit { width: 38px !important; height: 38px !important; right: -1px !important; }
+  .phi-access-submit::before { inset: 3px !important; clip-path: polygon(11px 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 11px 100%, 0 50%) !important; }
+  .phi-access-submit svg { width: 21px !important; height: 20px !important; }
+}
+
+
+/* ============================================================
+   v0.92.9 — progress restoration + clean passcode geometry
+   ============================================================ */
+/* The meter fill is restored from the real per-post percentage on unlock. */
+.phi-file-topbar {
+  position: relative !important;
+  isolation: isolate !important;
+  --analysis-progress: 0%;
+}
+.phi-file-topbar:not(.is-access-protected) .phi-analysis-status > span {
+  quotes: none !important;
+}
+
+/* One red six-sided passcode strip; no transparent wrapper or stray black edges. */
+.phi-access-passcode {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 54px !important;
+  box-sizing: border-box !important;
+  padding: 4px 48px 4px 20px !important;
+  gap: 0 !important;
+  overflow: visible !important;
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 20px 100%, 0 50%) !important;
+  background: #f0000b !important;
+  box-shadow: 0 0 16px rgba(255,0,20,.3) !important;
+}
+.phi-access-passcode::before { content: none !important; display: none !important; }
+.phi-access-input {
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #180507 !important;
+  text-align: center !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+.phi-access-input::placeholder { color: rgba(28,0,0,.82) !important; opacity: 1 !important; text-transform: uppercase !important; }
+.phi-access-input:hover,
+.phi-access-input:focus,
+.phi-access-input:focus-visible,
+.phi-access-input:active { border: 0 !important; outline: 0 !important; box-shadow: none !important; background: transparent !important; }
+.phi-access-submit {
+  position: absolute !important;
+  z-index: 3 !important;
+  top: 50% !important;
+  right: 2px !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  transform: translateY(-50%) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%) !important;
+  background: #f0000b !important;
+  color: #ff101b !important;
+  transition: none !important;
+  animation: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+}
+.phi-access-submit::before {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 3px !important;
+  background: #080a0c !important;
+  clip-path: polygon(13px 0, calc(100% - 13px) 0, 100% 50%, calc(100% - 13px) 100%, 13px 100%, 0 50%) !important;
+}
+.phi-access-submit svg {
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: 25px !important;
+  height: 25px !important;
+  color: #ff101b !important;
+  fill: currentColor !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+.phi-access-submit svg path { fill: currentColor !important; stroke: none !important; }
+.phi-access-submit:hover,
+.phi-access-submit:focus,
+.phi-access-submit:focus-visible,
+.phi-access-submit:active,
+.phi-access-submit:disabled {
+  background: #f0000b !important;
+  color: #ff101b !important;
+  filter: none !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  transform: translateY(-50%) !important;
+}
+.phi-access-submit:hover::before,
+.phi-access-submit:focus::before,
+.phi-access-submit:focus-visible::before,
+.phi-access-submit:active::before,
+.phi-access-submit:disabled::before { background: #080a0c !important; }
+@media (max-width: 640px) {
+  .phi-access-passcode { height: 46px !important; padding: 4px 40px 4px 13px !important; clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%) !important; }
+  .phi-access-submit { right: 1px !important; width: 38px !important; height: 38px !important; clip-path: polygon(13px 0, calc(100% - 13px) 0, 100% 50%, calc(100% - 13px) 100%, 13px 100%, 0 50%) !important; }
+  .phi-access-submit::before { inset: 3px !important; clip-path: polygon(11px 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 11px 100%, 0 50%) !important; }
+  .phi-access-submit svg { width: 22px !important; height: 22px !important; }
+}
+
+/* ============================================================
+   v0.93.1 — restore native titlebar meter + simple arrow key
+   ============================================================ */
+/* IMPORTANT: ordinary articles use the topbar ::before as the progress fill.
+   Protected articles now reuse that same implementation after decryption. */
+.phi-file-topbar {
+  position: relative !important;
+  isolation: isolate !important;
+  --analysis-progress: 0%;
+}
+.phi-file-tab,
+.phi-analysis-status {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Compact six-sided entry strip. The action key is inset so it no longer
+   touches the input strip's right edge; its diagonal sides remain parallel. */
+.phi-access-passcode {
+  height: 48px !important;
+  padding: 3px 62px 3px 18px !important;
+  clip-path: polygon(18px 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 18px 100%, 0 50%) !important;
+  background: #f0000b !important;
+  overflow: visible !important;
+}
+.phi-access-submit {
+  right: 8px !important;
+  width: 46px !important;
+  height: 42px !important;
+  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%) !important;
+  font-family: "Segoe UI Variable", "Segoe UI", sans-serif !important;
+}
+.phi-access-submit::before {
+  inset: 3px !important;
+  clip-path: polygon(13px 0, calc(100% - 13px) 0, 100% 50%, calc(100% - 13px) 100%, 13px 100%, 0 50%) !important;
+}
+@media (max-width: 640px) {
+  .phi-access-passcode { height: 42px !important; padding: 3px 52px 3px 13px !important; clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%) !important; }
+  .phi-access-submit {
+    right: 7px !important;
+    width: 38px !important;
+    height: 36px !important;
+    clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%) !important;
+  }
+  .phi-access-submit::before {
+    inset: 3px !important;
+    clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 9px 100%, 0 50%) !important;
+  }
+}
+
+
+
+/* Passcode alignment and SVG arrow geometry. */
+.phi-access-input {
+  text-indent: 8px !important;
+  line-height: 1 !important;
+}
+.phi-access-submit {
+  width: 54px !important;
+  height: 46px !important;
+  right: 4px !important;
+}
+.phi-access-submit svg {
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: 20px !important;
+  height: 23px !important;
+  color: #ff101b !important;
+  fill: currentColor !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+.phi-access-submit svg path {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+@media (max-width: 640px) {
+  .phi-access-submit {
+    width: 46px !important;
+    height: 40px !important;
+    right: 3px !important;
+  }
+  .phi-access-submit svg { width: 18px !important; height: 21px !important; }
+}
+
+/* Restore the original native titlebar meter. All articles use this same
+   ::before fill, driven only by the per-post --analysis-progress percentage. */
+.phi-file-topbar {
+  position: relative !important;
+  isolation: isolate !important;
+  --analysis-progress: 0%;
+  background: #1c3140 !important;
+  overflow: visible !important;
+}
+.phi-file-topbar::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 0 auto 0 0 !important;
+  width: var(--analysis-progress, 0%) !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 2px, rgba(255,255,255,0) 2px 7px), #315472 !important;
+  box-shadow: inset -3px 0 rgba(226,241,246,.76) !important;
+  transition: width .45s ease !important;
+}
+.phi-file-topbar::after { z-index: 0 !important; }
+.phi-file-tab,
+.phi-analysis-status { position: relative !important; z-index: 2 !important; }
+
+
+/* v0.93.5 — keep the supplied Font Awesome arrow white in every state. */
+.phi-access-submit svg { color: #fff !important; }
+.phi-access-submit svg path { fill: #fff !important; stroke: none !important; }
+
+/* v0.93.7 — locked-only colors. Unlocked/original meter remains untouched. */
+.phi-file-topbar.is-access-locked {
+  background: #3b2023 !important;
+}
+.phi-file-topbar.is-access-locked .phi-file-tab {
+  background: #7b3037 !important;
+  border-color: #7b3037 !important;
+}
+.phi-file-topbar.is-access-locked::before {
+  width: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Use a plain arrow glyph; request Kazesawa from Google Fonts and fall back safely. */
+.phi-access-submit > span {
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+  color: #fff !important;
+  font-family: "Kazesawa", "Kazesawa Regular", "Saira", sans-serif !important;
+  font-size: 27px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+@media (max-width: 640px) {
+  .phi-access-submit > span { font-size: 22px !important; }
+}
+
+
+
+/* v0.93.7 — slightly smaller access arrow and hexagonal submit control. */
+.phi-access-submit { width: 44px !important; height: 42px !important; }
+.phi-access-submit > span { font-size: 24px !important; }
+@media (max-width: 640px) {
+  .phi-access-submit { width: 36px !important; height: 36px !important; }
+  .phi-access-submit > span { font-size: 20px !important; }
+}
+
+/* v0.93.8 — extend the access key slightly to the left and reduce arrow size. */
+.phi-access-submit { width: 48px !important; }
+.phi-access-submit > span { font-size: 22px !important; }
+@media (max-width: 640px) {
+  .phi-access-submit { width: 40px !important; }
+  .phi-access-submit > span { font-size: 18px !important; }
+}
+
+
+/* v0.93.9 — cached-key first paint: retain the normal titlebar while WebCrypto
+   validates the saved key. If validation fails, JS removes this class and the
+   intended locked styling appears; no unlock/progress rewrite is performed. */
+html.phi-access-cache-pending .phi-file-topbar.is-access-locked {
+  background: #1c3140 !important;
+}
+html.phi-access-cache-pending .phi-file-topbar.is-access-locked .phi-file-tab {
+  background: #1688c1 !important;
+  border-color: #1688c1 !important;
+}
+html.phi-access-cache-pending .phi-file-topbar.is-access-locked::before {
+  width: var(--analysis-progress, 0%) !important;
+  box-shadow: inset -3px 0 rgba(226,241,246,.76) !important;
+}

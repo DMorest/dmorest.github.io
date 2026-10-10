@@ -8,6 +8,14 @@
   analysis = Math.max(0, Math.min(100, analysis));
 
   var analysisStatus = analysis >= 100 ? 'ANALYZATION COMPLETE.' : (analysis + '% ANALYZED.');
+  var unlockedAnalysisStatus = analysisStatus;
+
+  /* Optional build-time encryption for protected static articles. */
+  var accessKey = page.access_key == null ? '' : String(page.access_key);
+  var accessStorageKey = 'phi-access:' + String(page.path || '').replace(/[^a-zA-Z0-9_-]/g, '_');
+  if (accessKey) analysisStatus = '???% ANALYZED';
+  /* Crypto is performed by a Hexo helper (Node APIs are unavailable in EJS sandbox). */
+  var accessPayload = accessKey ? encryptAccessPayload(String(page.content || ''), accessKey) : null;
 
   var commentFlag = String(page.comments == null ? '' : page.comments).trim().toLowerCase();
   var commentsEnabled = !(commentFlag === 'false' || commentFlag === '0' || commentFlag === 'no') && (!theme.comments || theme.comments.enable !== false);
@@ -128,6 +136,20 @@
   folderItems = Math.max(1, folderItems);
 %>
 
+<% if (accessPayload) { %>
+<script>
+/* Before the protected top bar is parsed, identify a cached key so its first
+   rendered frame uses the normal meter while WebCrypto verifies the key. */
+(function () {
+  try {
+    if (localStorage.getItem(<%- JSON.stringify(accessStorageKey) %>)) {
+      document.documentElement.classList.add('phi-access-cache-pending');
+    }
+  } catch (_) {}
+})();
+</script>
+<% } %>
+
 <article class="phi-file-view<%= commentsEnabled ? "" : " is-comments-closed" %>">
   <button class="phi-folder-mobile-toggle" type="button" aria-expanded="false" aria-controls="phi-folder-panel">FOLDER</button>
   <button class="phi-folder-mobile-scrim" type="button" aria-label="Close folder" tabindex="-1"></button>
@@ -164,8 +186,8 @@
     </div>
   </aside>
 
-  <section class="phi-file-panel">
-    <div class="phi-file-topbar" style="--analysis-progress:<%= analysis %>%" aria-label="<%= analysisStatus %>">
+  <section class="phi-file-panel<%= accessPayload ? ' is-access-initializing' : '' %>">
+    <div class="phi-file-topbar<%= accessPayload ? ' is-access-locked' : '' %>" style="--analysis-progress:<%= analysis %>%" aria-label="<%= analysisStatus %>"<%= accessPayload ? ' data-unlocked-progress="' + analysis + '" data-unlocked-status="' + encodeURIComponent(unlockedAnalysisStatus) + '"' : '' %>>
       <div class="phi-file-tab">FILE_CONTENT</div>
       <div class="phi-analysis-status">
         <span><%= analysisStatus %></span>
@@ -185,8 +207,33 @@
       <div class="phi-file-rule"></div>
     </header>
 
-    <div class="phi-file-content">
-      <%- page.content %>
+    <div class="phi-file-content<%= accessPayload ? ' phi-access-protected' : '' %>">
+      <% if (accessPayload) { %>
+        <section class="phi-access-gate" hidden data-access-gate data-payload='<%- JSON.stringify(accessPayload) %>' data-storage-key="<%- accessStorageKey %>">
+          <div class="phi-access-warning" aria-hidden="true"><svg viewBox="0 0 52 48" focusable="false"><path d="M26 3 49 44H3Z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="miter"/><path d="M26 15v14" fill="none" stroke="currentColor" stroke-width="4"/><rect x="24" y="33" width="4" height="4" fill="currentColor"/></svg></div>
+          <div class="phi-access-stripes" aria-hidden="true"></div>
+          <h2 class="phi-access-title">ACCESS DENIED</h2>
+          <p class="phi-access-description" data-access-description>访问被拒绝，需要通行密钥来继续</p>
+          <form class="phi-access-form" data-access-form>
+            <div class="phi-access-passcode">
+              <input id="phi-access-key" class="phi-access-input" type="text" autocomplete="off" spellcheck="false" placeholder="请输入访问密钥..." aria-label="Access key" data-access-input>
+              <button class="phi-access-submit" type="submit" aria-label="Unlock article"><span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+        </section>
+        <div class="phi-access-unlocked" data-access-content hidden></div>
+        <div class="phi-access-modal" data-access-modal hidden role="dialog" aria-modal="true" aria-labelledby="phi-access-modal-title">
+          <div class="phi-access-modal__backdrop" data-access-modal-close></div>
+          <div class="phi-access-modal__panel">
+            <div class="phi-access-modal__hazard" aria-hidden="true"></div>
+            <h3 id="phi-access-modal-title">警告</h3>
+            <p data-access-error>密钥错误！</p>
+            <button type="button" data-access-modal-close>确认</button>
+          </div>
+        </div>
+      <% } else { %>
+        <%- page.content %>
+      <% } %>
     </div>
 
     <% if (theme.post.show_prev_next !== false && (page.prev || page.next)) { %>

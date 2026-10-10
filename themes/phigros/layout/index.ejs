@@ -153,7 +153,7 @@
             <div class="phi-timeline-item__date"><%= date(post.date, 'YYYY.MM.DD') %></div>
             <div class="phi-timeline-item__body">
               <h3><%= post.title %></h3>
-              <% var excerpt = post.excerpt ? strip_html(post.excerpt) : strip_html(post.content || ''); %>
+              <% var excerpt = post.access_key ? '' : (post.excerpt ? strip_html(post.excerpt) : strip_html(post.content || '')); %>
               <% if (excerpt) { %><p><%= excerpt.substring(0, 100) %><%= excerpt.length > 100 ? '…' : '' %></p><% } %>
             </div>
             <span class="phi-timeline-item__arrow">›</span>

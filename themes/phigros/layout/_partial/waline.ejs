@@ -4,7 +4,7 @@
   var walineConfig = (theme.comments && theme.comments.waline) || {};
 %>
 <% if (commentsEnabled && (!theme.comments || theme.comments.enable !== false)) { %>
-<section class="phi-comments" aria-label="Comments">
+<section class="phi-comments" aria-label="Comments"<%= page.access_key ? ' hidden data-protected-comments' : '' %>>
   <div class="phi-comments__topbar">
     <span class="phi-comments__tab">FILE_COMMENT</span>
     <span class="phi-comments__status">SECURE CHANNEL / <%= walineConfig.lang || 'zh-CN' %></span>
@@ -18,13 +18,26 @@
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css">
 <script type="module">
   import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
-  init({
-    el: '#waline',
-    serverURL: '<%= walineConfig.serverURL || "" %>',
-    lang: '<%= walineConfig.lang || "zh-CN" %>',
-    dark: true,
-    path: '<%= page.path %>',
-    pageview: '.waline-pageview-count'
-  });
+  const comments = document.querySelector('.phi-comments');
+  const protectedGate = document.querySelector('[data-access-gate]');
+  let initialized = false;
+  function startWaline() {
+    if (initialized || !comments) return;
+    initialized = true;
+    comments.hidden = false;
+    init({
+      el: '#waline',
+      serverURL: '<%= walineConfig.serverURL || "" %>',
+      lang: '<%= walineConfig.lang || "zh-CN" %>',
+      dark: true,
+      path: '<%= page.path %>',
+      pageview: '.waline-pageview-count'
+    });
+  }
+  if (protectedGate) {
+    document.addEventListener('phi:access-unlocked', startWaline, { once: true });
+  } else {
+    startWaline();
+  }
 </script>
 <% } %>

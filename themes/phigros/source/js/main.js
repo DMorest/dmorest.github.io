@@ -476,3 +476,136 @@
 
   setOpen(false);
 })();
+
+/* ==========================================================
+   ACCESS KEY GATE — decrypt protected article content locally
+   ========================================================== */
+(function () {
+  "use strict";
+  var gates = document.querySelectorAll("[data-access-gate]");
+  if (!gates.length) return;
+
+  function fromBase64(value) {
+    var binary = atob(value);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  }
+  function utf8(value) { return new TextEncoder().encode(value); }
+  function getLanguage() { return /^en(?:-|$)/i.test(navigator.language || "") ? "en" : "zh"; }
+
+  gates.forEach(function (gate) {
+    var form = gate.querySelector("[data-access-form]");
+    var input = gate.querySelector("[data-access-input]");
+    var payload;
+    try { payload = JSON.parse(gate.getAttribute("data-payload") || "{}"); } catch (_) { return; }
+    var content = gate.parentElement.querySelector("[data-access-content]");
+    var modal = gate.parentElement.querySelector("[data-access-modal]");
+    /* Keep the dialog as a direct child of body. Some glass/backdrop-filter
+       ancestors create a containing block for position:fixed, which pushed the
+       modal down into the article instead of centering it in the viewport. */
+    if (modal && modal.parentElement !== document.body) document.body.appendChild(modal);
+    var error = modal && modal.querySelector("[data-access-error]");
+    var storageKey = gate.getAttribute("data-storage-key") || "phi-access:article";
+    var english = getLanguage() === "en";
+    if (input) {
+      input.placeholder = english ? "PLEASE INPUT ACCESS KEY..." : "请输入访问密钥...";
+      input.setAttribute("aria-label", english ? "Access key" : "访问密钥");
+    }
+    var description = gate.querySelector("[data-access-description]");
+    if (description) description.textContent = english ? "ACCESS RESTRICTED — ENTER THE KEY TO CONTINUE" : "访问被拒绝，需要通行密钥来继续";
+    var submit = form && form.querySelector("button[type='submit']");
+    if (submit) submit.setAttribute("aria-label", english ? "Unlock article" : "解锁文章");
+    if (error) error.textContent = english ? "Incorrect access key!" : "密钥错误！";
+    var modalTitle = modal && modal.querySelector("h3");
+    if (modalTitle && english) modalTitle.textContent = "WARNING";
+    var modalButton = modal && modal.querySelector("[data-access-modal-close]:not(.phi-access-modal__backdrop)");
+    if (modalButton && english) modalButton.textContent = "CONFIRM";
+
+    function showError() {
+      if (!modal) return;
+      modal.hidden = false;
+      if (modalButton) modalButton.focus();
+    }
+    function hideModal() { if (modal) modal.hidden = true; }
+    if (modal) modal.querySelectorAll("[data-access-modal-close]").forEach(function (button) {
+      button.addEventListener("click", hideModal);
+    });
+
+    async function unlock(key, fromCache) {
+      if (!window.crypto || !crypto.subtle) throw new Error("WebCrypto unavailable");
+      var material = await crypto.subtle.importKey("raw", utf8(key), "PBKDF2", false, ["deriveKey"]);
+      var aesKey = await crypto.subtle.deriveKey({
+        name: "PBKDF2", salt: fromBase64(payload.salt), iterations: Number(payload.iterations) || 210000, hash: "SHA-256"
+      }, material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+      var combined = new Uint8Array(fromBase64(payload.data).length + fromBase64(payload.tag).length);
+      var encrypted = fromBase64(payload.data), tag = fromBase64(payload.tag);
+      combined.set(encrypted, 0); combined.set(tag, encrypted.length);
+      var plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: fromBase64(payload.iv), tagLength: 128 }, aesKey, combined);
+      var html = new TextDecoder().decode(plain);
+      content.innerHTML = html;
+      content.hidden = false;
+      gate.hidden = true;
+      /* Restore the exact unprotected status and progress from build-time metadata.
+         Status is URI-encoded in HTML so punctuation/escaping cannot corrupt it. */
+      var filePanel = gate.closest(".phi-file-panel");
+      var topbar = filePanel ? filePanel.querySelector(".phi-file-topbar") : document.querySelector(".phi-file-topbar[data-unlocked-progress]");
+      if (topbar) {
+        var realProgress = topbar.getAttribute("data-unlocked-progress");
+        var encodedStatus = topbar.getAttribute("data-unlocked-status");
+        var realStatus = "";
+        try { realStatus = encodedStatus !== null ? decodeURIComponent(encodedStatus) : ""; } catch (_) { realStatus = ""; }
+        /* Defensive cleanup: metadata must be plain UI copy, never quoted data. */
+        realStatus = String(realStatus || "").replace(/[\"“”‘’']/g, "").trim();
+        /* IMPORTANT: do not write --analysis-progress during unlock.
+           The topbar already has the exact per-post percentage in its original
+           inline style, identical to an ordinary article. Rewriting from the
+           data attribute here was the source of the fill collapsing to 0%. */
+        if (realStatus) {
+          var statusNode = topbar.querySelector(".phi-analysis-status > span");
+          if (statusNode) statusNode.textContent = realStatus;
+          topbar.setAttribute("aria-label", realStatus);
+        }
+        /* Remove any legacy lock marker after restoring the real status. */
+        topbar.classList.remove("is-access-locked");
+        topbar.removeAttribute("data-unlocked-progress");
+        topbar.removeAttribute("data-unlocked-status");
+      }
+      document.documentElement.classList.remove("phi-access-cache-pending");
+      if (filePanel) filePanel.classList.remove("is-access-initializing");
+      document.dispatchEvent(new CustomEvent("phi:access-unlocked"));
+      if (!fromCache) {
+        try { localStorage.setItem(storageKey, key); } catch (_) {}
+      }
+    }
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      var key = input.value;
+      if (!key) { input.focus(); return; }
+      if (submit) { submit.disabled = true; }
+      try { await unlock(key, false); }
+      catch (_) { showError(); input.select(); }
+      finally { if (submit) submit.disabled = false; }
+    });
+
+    /* Avoid flashing the red ACCESS DENIED gate on repeat visits.
+       The gate is server-rendered hidden; reveal it only when no cached key
+       exists or the cached key can no longer decrypt this article. */
+    var cachedKey = "";
+    try { cachedKey = localStorage.getItem(storageKey) || ""; } catch (_) {}
+    if (cachedKey) {
+      unlock(cachedKey, true).catch(function () {
+        try { localStorage.removeItem(storageKey); } catch (_) {}
+        document.documentElement.classList.remove("phi-access-cache-pending");
+        var panel = gate.closest(".phi-file-panel");
+        if (panel) panel.classList.remove("is-access-initializing");
+        gate.hidden = false;
+      });
+    } else {
+      var panel = gate.closest(".phi-file-panel");
+      if (panel) panel.classList.remove("is-access-initializing");
+      gate.hidden = false;
+    }
+  });
+})();
