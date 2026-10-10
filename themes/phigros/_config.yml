@@ -130,6 +130,12 @@ home:
     copyright_title: "PHATASiA LOTUS LAND"
     friends: []
 
+# Moe Counter 总访问量：全站每次页面访问均计数，仅在 About 与首页最后一屏显示。
+visitor_counter:
+  enable: true
+  id: "dmorest.github.io"
+  theme: "random"
+
 # Waline 评论系统
 comments:
   enable: true

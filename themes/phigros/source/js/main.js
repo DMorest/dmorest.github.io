@@ -353,7 +353,7 @@
 // PHANTASiA terminal browser-tab presence signal.
 (function () {
   "use strict";
-  var normalTitle = "PHANTASiA LOST LAND";
+  var normalTitle = "PHANTASiA LOTUS LAND";
   var blurredTitle = "PHANTASiA LOST...";
   var connectedTitle = "PHANTASiA CONNECTED";
   var restoreTimer = null;
@@ -380,7 +380,7 @@
     restoreTimer = window.setTimeout(function () {
       restoreTimer = null;
       document.title = normalTitle;
-    }, 2000);
+    }, 1000);
   };
 
   window.addEventListener("blur", onBlur);

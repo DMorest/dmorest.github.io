@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="<%= config.language || 'zh-CN' %>">
 <%- partial('_partial/head') %>
-<body class="phi-body <%= (page && (page.type === 'index' || page.path === 'index.html' || page.path === '')) ? 'is-home-page' : '' %><%= (page && (page.layout === 'post' || page.type === 'post')) ? ' is-post-page' : '' %>">
+<%
+  var counterPagePath = String((page && page.path) || '').replace(/^\//, '');
+  var counterIsHome = !!(page && (page.type === 'index' || counterPagePath === 'index.html' || counterPagePath === ''));
+  var counterIsAbout = !!(page && (page.title === '关于' || counterPagePath.indexOf('about/') === 0 || counterPagePath === 'about/index.html' || counterPagePath === 'about.html'));
+  var counterConfig = theme.visitor_counter || {};
+  var counterId = String(counterConfig.id || 'dmorest.github.io').trim();
+  var counterTheme = String(counterConfig.theme || 'random').trim();
+%>
+<body class="phi-body <%= counterIsHome ? 'is-home-page' : '' %><%= (page && (page.layout === 'post' || page.type === 'post')) ? ' is-post-page' : '' %>">
   <div class="phi-bg-layer" aria-hidden="true">
     <% if (theme.background && theme.background.image) { %>
     <div class="phi-bg-image" style="background-image: url('<%- url_for(theme.background.image) %>'); filter: blur(<%= theme.background.blur || '12px' %>) brightness(<%= theme.background.brightness || 0.35 %>);"></div>
@@ -16,6 +24,36 @@
     <%- body %>
   </main>
   <%- partial('_partial/footer') %>
+  <% if (counterConfig.enable !== false && !counterIsHome && !counterIsAbout) { %>
+  <img class="phi-visitor-tracker" data-counter-id="<%- counterId %>" data-counter-theme="<%- counterTheme %>" alt="" aria-hidden="true" referrerpolicy="no-referrer">
+  <% } %>
+  <script>
+    // One Moe Counter theme is chosen per page load. All counter requests share the same ID.
+    (function () {
+      var images = document.querySelectorAll('img[data-counter-id]');
+      var themes = [
+        '3d-num', 'ai-1', 'asoul', 'capoo-1', 'capoo-2', 'food', 'green',
+        'kasuterura-1', 'kasuterura-2', 'kasuterura-3', 'kasuterura-4',
+        'kyun', 'love-and-deepspace', 'miku', 'minecraft',
+        'morden-num', 'nixietube-1', 'nixietube-2', 'normal-1', 'normal-2',
+        'original-new', 'original-old', 'sketch-1', 'sketch-2', 'yousa-ling'
+      ];
+      var chosenTheme = themes[Math.floor(Math.random() * themes.length)];
+      for (var i = 0; i < images.length; i++) {
+        var image = images[i];
+        var id = image.getAttribute('data-counter-id');
+        var configuredTheme = image.getAttribute('data-counter-theme') || 'random';
+        if (!id) continue;
+        var selectedTheme = configuredTheme.toLowerCase() === 'random' ? chosenTheme : configuredTheme;
+        var url = 'https://count.getloli.com/@' + encodeURIComponent(id);
+        if (selectedTheme) url += '?theme=' + encodeURIComponent(selectedTheme);
+        url += (url.indexOf('?') === -1 ? '?' : '&') + 'cb=' + Date.now() + '-' + i;
+        image.src = url;
+        image.removeAttribute('data-counter-id');
+        image.removeAttribute('data-counter-theme');
+      }
+    })();
+  </script>
   <script src="<%- url_for('/js/main.js') %>"></script>
 </body>
 </html>

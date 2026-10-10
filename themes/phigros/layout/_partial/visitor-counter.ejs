@@ -1,0 +1,11 @@
+<%
+  var counterConfig = theme.visitor_counter || {};
+  var counterId = String(counterConfig.id || 'dmorest.github.io').trim();
+  var counterTheme = String(counterConfig.theme || 'random').trim();
+%>
+<% if (counterConfig.enable !== false) { %>
+<div class="phi-visitor-counter" aria-label="网站总访问量">
+  <span class="phi-visitor-counter__label">TOTAL ACCESS // 累计访问</span>
+  <img data-counter-id="<%- counterId %>" data-counter-theme="<%- counterTheme %>" alt="网站累计访问量" referrerpolicy="no-referrer">
+</div>
+<% } %>

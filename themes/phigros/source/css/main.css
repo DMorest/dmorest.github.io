@@ -3563,3 +3563,57 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
   }
 }
 
+
+
+/* =========================================================
+   Moe Counter / TOTAL ACCESS
+   Shared counter instance on About and the homepage final panel.
+   ========================================================= */
+.phi-visitor-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 26px auto 0;
+  padding: 17px 12px 4px;
+  border-top: 1px solid rgba(57,185,232,.16);
+  text-align: center;
+}
+.phi-visitor-counter__label {
+  color: rgba(126,166,178,.72);
+  font: 600 9px/1.5 var(--phi-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.phi-visitor-counter img {
+  display: block;
+  max-width: min(100%, 360px);
+  height: auto;
+  image-rendering: pixelated;
+  opacity: .92;
+  transition: opacity .2s ease;
+}
+.phi-visitor-counter img:hover {
+  opacity: 1;
+}
+.phi-about-body > .phi-visitor-counter {
+  margin-top: 30px;
+}
+.phi-home-section--misc > .phi-visitor-counter {
+  margin-top: 18px;
+}
+@media (max-width: 640px) {
+  .phi-visitor-counter {
+    margin-top: 20px;
+    padding-top: 14px;
+  }
+  .phi-visitor-counter__label {
+    font-size: 8px;
+    letter-spacing: .12em;
+  }
+}
+
+.phi-visitor-tracker { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; opacity: 0 !important; pointer-events: none !important; }
