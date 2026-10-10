@@ -3665,3 +3665,60 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
     bottom: 0;
   }
 }
+
+/* v0.91.3 — mobile layout corrections from device screenshots. */
+@media (max-width: 640px) {
+  /* The counter image can be tall; put copyright back into normal flow and
+     order it after the counter instead of absolutely overlaying the digits. */
+  body.is-home-page .phi-home-section--misc {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  body.is-home-page .phi-home-section--misc .phi-misc-grid { order: 0; flex: 0 0 auto; }
+  body.is-home-page .phi-home-section--misc > .phi-visitor-counter {
+    order: 1;
+    flex: 0 0 auto;
+    margin: 20px auto 0;
+    padding: 14px 8px 0;
+  }
+  body.is-home-page .phi-home-section--misc .phi-visitor-counter img {
+    width: min(100%, 260px);
+    max-width: 260px;
+    max-height: 78px;
+    object-fit: contain;
+  }
+  body.is-home-page .phi-home-section--misc .phi-misc-copyright {
+    position: relative;
+    inset: auto;
+    order: 2;
+    flex: 0 0 auto;
+    margin: 16px 0 12px;
+    padding: 0 10px;
+  }
+
+  /* Strengthen the same animated triangular mesh on phone screens; keep its
+     SVG scan animation and geometry intact rather than replacing the effect. */
+  .phi-home-fisheye { opacity: .94 !important; }
+  .phi-network-base { stroke: rgba(111, 209, 238, .23) !important; stroke-width: 1.05 !important; }
+  .phi-network-glow { stroke: rgba(178, 239, 250, .98) !important; stroke-width: 1.45 !important; }
+}
+
+/* Pinned and selected folder rails share the same width; orange wins when
+   the selected item is also pinned, avoiding a doubled 8px edge. */
+.phi-folder-item.is-pinned::before { width: 4px; }
+.phi-folder-item.is-pinned.is-current {
+  border-left: 0;
+  padding-left: 11px;
+}
+.phi-folder-item.is-pinned.is-current::before { width: 4px; }
+
+/* Vertically center archive year/count labels between the horizontal rules. */
+.phi-collection-group-label {
+  min-height: 44px;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 0 4px;
+  line-height: 1.2;
+}
+.phi-collection-group-label small { line-height: 1.2; }
