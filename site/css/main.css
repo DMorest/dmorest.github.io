@@ -3613,11 +3613,7 @@ body.is-post-page .phi-main { position: relative; z-index: 2; }
 .phi-timeline-item.is-pinned .phi-timeline-item__marker span {
   color: var(--phi-pin-orange); border-color: rgba(255,155,69,.7);
 }
-.phi-collection-page--archive .phi-collection-file.is-pinned { position: relative; }
-.phi-collection-page--archive .phi-collection-file.is-pinned::before {
-  content: ""; position: absolute; left: 0; top: 50%; width: 3px; height: 20px;
-  transform: translateY(-50%); background: var(--phi-pin-orange);
-}
+/* Archive pins keep the orange index treatment, but no left rail. */
 .phi-collection-page--archive .phi-collection-file.is-pinned .phi-collection-file__index {
   color: var(--phi-pin-orange); border-color: rgba(255,155,69,.72);
 }
